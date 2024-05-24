@@ -57,13 +57,35 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	char *rl;
 	int	i;
+	DIR *mydir;
+	struct dirent *d;
+	struct stat mystat;
+	char buf[512];
+	const char *dir_path = "/home/brh/Bureau/minishell/minishell";
 	
+	mydir = opendir(dir_path);
+	if (mydir == NULL)
+	{
+		perror("opendir");
+		return 1;
+	}
+	while (1)
+	{
 	i = 1;
-	if (argc == 1)
-		rl = argv[1];
 	while (i < argc)
-		rl = ft_strjoin(rl, argv[i]); 
-    	rl = readline("Prompt > ");
-    	printf("%s\n", rl);
+	{
+		rl = ft_strjoin(rl, argv[i]);
+		i++;
+	}
+    	rl = readline("minishell > ");
+    	if (rl[0] == 'l' && rl[1] == 's' && rl[2] == '\0')
+	{
+            	while ((d = readdir(mydir)) != NULL)
+               	 	printf("%s\n", d->d_name);
+        }
+        else
+    		printf("%s\n", rl);
+    	}
+    	closedir(mydir);
     	return (0);
 }
