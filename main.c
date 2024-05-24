@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 17:11:46 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/23 17:12:54 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/25 00:09:49 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,17 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 int	main(int argc, char **argv, char **env)
 {
+	char	*rl;
+	int		i;
+
 	(void)argc;
 	(void)argv;
-	char *rl;
-	int	i;
-	
 	i = 1;
 	if (argc == 1)
 		rl = argv[1];
 	while (i < argc)
-		rl = ft_strjoin(rl, argv[i]); 
-    	rl = readline("Prompt > ");
-    	printf("%s\n", rl);
-    	return (0);
+		rl = ft_strjoin(rl, argv[i]);
+	rl = readline("minishell> ");
+	printf("%s\n", rl);
+	return (0);
 }
