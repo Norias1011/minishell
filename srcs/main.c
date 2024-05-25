@@ -290,14 +290,24 @@ int	main(int argc, char **argv)
     	rl = readline("minishell > ");
     	token(rl, &token_lst);
     	t_list *current = token_lst;
-        while (current)
-        {
-            printf(" %s ->  %s", get_token_name(current->token), current->content);
-            printf("\n");
-            t_list *temp = current;
-            current = current->next;
-            free(temp->content);
-            free(temp);
+    	if (current->token == STRING && (strncmp(current->content, "echo", 4) == 0) && current->next->token == SPC)
+    	{
+    		current = current->next;
+    		current = current->next;
+    		while (current)
+    		{
+    			printf("%s", current->content);
+    			current = current->next;
+    		}
+    	}
+    	else
+    	{		
+        	while (current)
+        	{
+        		printf(" %s ->  %s", get_token_name(current->token), current->content);
+        		printf("\n");
+        		current = current->next;
+        	}
         }
         token_lst = NULL;
         free(rl);
