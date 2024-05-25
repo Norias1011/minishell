@@ -121,7 +121,7 @@ void	token(char *rl, t_list **token_lst)
 	t_list *new;
 	
 	i = 0;
-	j = 0;	
+	j = 0;
 	while (rl[i])
 	{
 		new = malloc(sizeof(t_list));
@@ -182,6 +182,8 @@ void	token(char *rl, t_list **token_lst)
 		new->next = NULL;
 		add_token(token_lst, new);
 		i += j;
+		//free(new->content);
+		//free(new);
 	}
 }
 
@@ -258,6 +260,18 @@ char*	get_token_name(t_tokens token)
 		return "RIGHT_ARROW";
 	return "UNKNOW";
 }
+
+
+void free_token_lst(t_list *token_lst)
+{
+	while (token_lst)
+	{
+		t_list *temp = token_lst;
+		token_lst = token_lst->next;
+		free(temp->content);
+		free(temp);
+	}
+}
         	
 int	main(int argc, char **argv)
 {
@@ -265,19 +279,19 @@ int	main(int argc, char **argv)
 	(void)argv;
 	int	i;
 	char	*rl;
-	DIR *mydir;
+	//DIR *mydir;
 	//struct dirent *d;
 	t_list	*token_lst;
-	const char *dir_path = "/home/brh/Bureau/minishell";
+	//const char *dir_path = "/home/brh/Bureau/minishell";
 	
 	token_lst = NULL;
 	rl = NULL;
-	mydir = opendir(dir_path);
+	/*mydir = opendir(dir_path);
 	if (mydir == NULL)
 	{
 		perror("opendir");
 		return 1;
-	}
+	}*/
 	while (1)
 	{
 	//mydir = opendir(dir_path);
@@ -290,6 +304,12 @@ int	main(int argc, char **argv)
     	rl = readline("minishell > ");
     	token(rl, &token_lst);
     	t_list *current = token_lst;
+    	if (current->token == STRING && (strncmp(current->content, "exit", 4) == 0) && !(current->next))
+    	{
+    		free(rl);
+    		free_token_lst(token_lst);
+    		break ;
+    	}
     	if (current->token == STRING && (strncmp(current->content, "echo", 4) == 0) && (current->next) && current->next->token == SPC)
     	{
     		current = current->next;
@@ -309,6 +329,7 @@ int	main(int argc, char **argv)
         		current = current->next;
         	}
         }
+        free_token_lst(token_lst);
         token_lst = NULL;
         free(rl);
         printf("\n");
