@@ -280,7 +280,7 @@ int	main(int argc, char **argv)
 	}
 	while (1)
 	{
-	mydir = opendir(dir_path);
+	//mydir = opendir(dir_path);
 	i = 1;
 	while (i < argc)
 	{
@@ -290,7 +290,7 @@ int	main(int argc, char **argv)
     	rl = readline("minishell > ");
     	token(rl, &token_lst);
     	t_list *current = token_lst;
-    	if (current->token == STRING && (strncmp(current->content, "echo", 4) == 0) && current->next->token == SPC)
+    	if (current->token == STRING && (strncmp(current->content, "echo", 4) == 0) && (current->next) && current->next->token == SPC)
     	{
     		current = current->next;
     		current = current->next;
