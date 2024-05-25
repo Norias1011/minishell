@@ -30,6 +30,19 @@ typedef enum e_tokens
 	STRING,
 	SYMBOL,
 	SPC,
+	PIPE,
+	ADD,
+	SOUSTRACT,
+	MULTI,
+	DOLLAR,
+	SLASH,
+	BACKSLASH,
+	COMA,
+	DOT,
+	DASH,
+	QUOTE,
+	DOUBLEQUOTE,
+	UNDERSCORE,
 }		t_tokens;
 
 typedef struct s_list
@@ -39,6 +52,7 @@ typedef struct s_list
 	struct s_list	*next;
 }		t_list;
 
+void	ft_lstadd_front_bonus(t_list **lst, t_list *new);
 int	ft_isalpha(int c);
 unsigned int	ft_strlcpy(char *dest, char const *src, unsigned int size);
 int	ft_isdigit(int c);

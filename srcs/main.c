@@ -60,7 +60,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (res);
 }
 
-void add_token(t_list **token_lst, t_list *new_token)
+void	add_token(t_list **token_lst, t_list *new_token)
 {
     t_list *last = get_last(*token_lst);
     if (last == NULL)
@@ -73,63 +73,175 @@ void add_token(t_list **token_lst, t_list *new_token)
     }
 }
 
-void token(char *rl, t_list **token_lst)
+t_tokens	get_symbol(char *symbol)
 {
-    int i = 0;
-    int j;
-    while (rl[i])
-    {
-        t_list *new = malloc(sizeof(t_list));
-        if (!new)
-            return;
+	t_tokens res;
+	
+	res = SYMBOL;
+	if (symbol[0] == '+')
+		res = ADD;
+	if (symbol[0] == '-')
+		res = SOUSTRACT;
+	if (symbol[0] == '*')
+		res = MULTI;
+	if (symbol[0] == '/')
+		res = SLASH;
+	if (symbol[0] == '\\')
+		res = BACKSLASH;
+	if (symbol[0] == ',')
+		res = COMA;
+	if (symbol[0] == '.')
+		res = DOT;
+	if (symbol[0] == '-')
+		res = DASH;
+	if (symbol[0] == '\'')
+		res = QUOTE;
+	if (symbol[0] == '"')
+		res = DOUBLEQUOTE;
+	if (symbol[0] == '_')
+		res = UNDERSCORE;
+	if (symbol[0] == '|')
+		res = PIPE;
+	return (res);
+}
+	
 
-        new->content = malloc(sizeof(char) * (ft_strlen(rl) + 1));
-        if (!new->content)
-        {
-            free(new);
-            return;
-        }
-
-        j = 0;
-        if (ft_isdigit(rl[i]))
-        {
-            while (ft_isdigit(rl[i + j]))
-                j++;
-            ft_strlcpy(new->content, rl + i, j + 1);
-            new->content[j + 2] = '\0';
-            new->token = NUMBER;
-        }
-        else if (ft_isalpha(rl[i]))
-        {
-            while (ft_isalpha(rl[i + j]))
-                j++;
-            ft_strlcpy(new->content, rl + i, j + 1);
-            new->content[j + 2] = '\0';
-            new->token = STRING;
-        }
-        else if (rl[i] == ' ')
-        {
-            while (rl[i + j] == ' ')
-                j++;
-            ft_strlcpy(new->content, rl + i, j + 1);
-            new->content[j + 2] = '\0';
-            new->token = SPC;
-        }
-        else
-        {
-            while (rl[i + j] && !(rl[i + j] == ' ') && !ft_isalpha(rl[i + j]) && !ft_isdigit(rl[i + j]))
-                j++;
-            ft_strlcpy(new->content, rl + i, j + 1);
-            new->content[j + 2] = '\0';
-            new->token = SYMBOL;
-        }
-        
-        new->next = NULL;
-        add_token(token_lst, new);
-        i += j;
-    }
+void	token(char *rl, t_list **token_lst)
+{
+	int	i;
+	int	j;
+	t_list *new;
+	
+	i = 0;
+	j = 0;	
+	while (rl[i])
+	{
+		new = malloc(sizeof(t_list));
+		if (!new)
+			return ;
+		j = 0;
+		if (ft_isdigit(rl[i])) 
+		{
+			while (ft_isdigit(rl[i + j]))
+				j++;
+			new->content = malloc(sizeof(char) * (j + 1));
+			if (!new->content)
+			{
+				free(new);
+				return ;
+			}
+			ft_strlcpy(new->content, rl + i, j + 1);
+			new->token = NUMBER;
+		}
+		else if (ft_isalpha(rl[i]))
+		{
+			while (ft_isalpha(rl[i + j]))
+				j++;
+			new->content = malloc(sizeof(char) * (j + 1));
+			if (!new->content)
+			{
+				free(new);
+				return ;
+			}
+			ft_strlcpy(new->content, rl + i, j + 1);
+			new->token = STRING;
+		}
+		else if (rl[i] == ' ')
+		{
+			while (rl[i + j] == ' ')
+				j++;
+			new->content = malloc(sizeof(char) * (j + 1));
+			if (!new->content)
+			{
+				free(new);
+				return ;
+			}
+			ft_strlcpy(new->content, rl + i, j + 1);
+			new->token = SPC;
+		}
+		else
+		{
+			j = 1;
+			new->content = malloc(sizeof(char) * (j + 1));
+			if (!new->content)
+			{
+				free(new);
+				return ;
+			}
+			ft_strlcpy(new->content, rl + i, j + 1);
+			new->token = get_symbol(new->content);
+		}
+		new->next = NULL;
+		add_token(token_lst, new);
+		i += j;
+	}
 }
 
+/*void	get_symbol(t_list **token_lst)
+{
+	t_list *current = *token_lst;
+	t_list *new = malloc(sizeof(t_list));
+	int	i;
+        while (current)
+        {
+        	i = 0;
+        	if (current->token == SYMBOL)
+        	{
+            		while (current->content[i])
+           		{
+         			new->content = malloc(sizeof(char) * (ft_strlen(current->content) + 1));
+            			ft_strlcpy(new->content, current->content + i, i + 1);
+            			new->content[2] = '\0';
+            			//new->token = get_new_symbol(new->content);
+            			ft_lstadd_front_bonus(&current, new);
+            			free(new->content);
+            			i++;
+            		}
+            	}			
+            t_list *temp = current;
+            current = current->next;
+            free(temp->content);
+            free(temp);
+        }
+}*/
+char*	get_token_name(t_tokens token)
+{
+	if (token == NUMBER)
+		return "NUMBER";
+	if (token == STRING)
+		return "STRING";
+	if (token == SYMBOL)
+		return "SYMBOL";
+	if (token == SPC)
+		return "SPC";
+	if (token == PIPE)
+		return "PIPE";
+	if (token == ADD)
+		return "ADD";
+	if (token == SOUSTRACT)
+		return "SOUSTRACT";
+	if (token == MULTI)
+		return "MULTI";
+	if (token == DOLLAR)
+		return "DOLLAR";
+	if (token == SLASH)
+		return "SLASH";
+	if (token == BACKSLASH)
+		return "BACKSLASH";
+	if (token == COMA)
+		return "COMA";
+	if (token == DOT)
+		return "DOT";
+	if (token == DASH)
+		return "DASH";
+	if (token == QUOTE)
+		return "QUOTE";
+	if (token == DOUBLEQUOTE)
+		return "DOUBLEQUOTE";
+	if (token == UNDERSCORE)
+		return "UNDERSCORE";
+	return "UNKNOW";
+}
         	
 int	main(int argc, char **argv)
 {
@@ -164,16 +276,8 @@ int	main(int argc, char **argv)
     	t_list *current = token_lst;
         while (current)
         {
-            if (current->token == NUMBER)
-                printf("NUMBER");
-            else if (current->token == SPC)
-                printf("SPC");
-            else if (current->token == SYMBOL)
-                printf("SYMBOL");
-            else if (current->token == STRING)
-                printf("STRING");
-            printf(" ->  %s", current->content);
-            printf(" / ");
+            printf(" %s ->  %s", get_token_name(current->token), current->content);
+            printf("\n");
             t_list *temp = current;
             current = current->next;
             free(temp->content);
