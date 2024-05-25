@@ -102,6 +102,14 @@ t_tokens	get_symbol(char *symbol)
 		res = UNDERSCORE;
 	if (symbol[0] == '|')
 		res = PIPE;
+	if (symbol[0] == '=')
+		res = EQUAL;
+	if (symbol[0] == ';')
+		res = SEMICOLON;
+	if (symbol[0] == '<')
+		res = LEFT_ARROW;
+	if (symbol[0] == '>')
+		res = RIGHT_ARROW;
 	return (res);
 }
 	
@@ -240,6 +248,14 @@ char*	get_token_name(t_tokens token)
 		return "DOUBLEQUOTE";
 	if (token == UNDERSCORE)
 		return "UNDERSCORE";
+	if (token == EQUAL)
+		return "EQUAL";
+	if (token == SEMICOLON)
+		return "SEMICOLON";
+	if (token == LEFT_ARROW)
+		return "LEFT_ARROW";
+	if (token == RIGHT_ARROW)
+		return "RIGHT_ARROW";
 	return "UNKNOW";
 }
         	
