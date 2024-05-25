@@ -24,6 +24,24 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+typedef enum e_tokens
+{
+	NUMBER,
+	STRING,
+	SYMBOL,
+	SPC,
+}		t_tokens;
+
+typedef struct s_list
+{
+	char			*content;
+	t_tokens	token;
+	struct s_list	*next;
+}		t_list;
+
+int	ft_isalpha(int c);
+unsigned int	ft_strlcpy(char *dest, char const *src, unsigned int size);
+int	ft_isdigit(int c);
 int	ft_strncmp(char const *str1, char const *str2, unsigned int n);
 
 #endif
