@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../include/minishell.h"
 
 int	ft_strlen(const char *str)
 {
@@ -51,18 +51,17 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (res);
 }
 
-int	main(int argc, char **argv, char **env)
+int	main(int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;
-	char *rl;
 	int	i;
+	char	*rl;
 	DIR *mydir;
 	struct dirent *d;
-	struct stat mystat;
-	char buf[512];
 	const char *dir_path = "/home/brh/Bureau/minishell/minishell";
 	
+	rl = NULL;
 	mydir = opendir(dir_path);
 	if (mydir == NULL)
 	{
