@@ -59,7 +59,7 @@ int	main(int argc, char **argv)
 	char	*rl;
 	DIR *mydir;
 	struct dirent *d;
-	const char *dir_path = "/home/brh/Bureau/minishell/minishell";
+	const char *dir_path = "/home/brh/Bureau/minishell";
 	
 	rl = NULL;
 	mydir = opendir(dir_path);
@@ -70,6 +70,7 @@ int	main(int argc, char **argv)
 	}
 	while (1)
 	{
+	mydir = opendir(dir_path);
 	i = 1;
 	while (i < argc)
 	{
@@ -77,13 +78,14 @@ int	main(int argc, char **argv)
 		i++;
 	}
     	rl = readline("minishell > ");
-    	if (rl[0] == 'l' && rl[1] == 's' && rl[2] == '\0')
+    	if (ft_strncmp(rl, "ls", 2) == 0)
 	{
             	while ((d = readdir(mydir)) != NULL)
                	 	printf("%s\n", d->d_name);
         }
         else
     		printf("%s\n", rl);
+    	closedir(mydir);
     	}
     	closedir(mydir);
     	return (0);

@@ -24,4 +24,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+int	ft_strncmp(char const *str1, char const *str2, unsigned int n);
+
 #endif
