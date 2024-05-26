@@ -292,6 +292,12 @@ int	check_command(t_list *token_lst) // test command de base avec le premier str
     		}
     		return (1);
     	}
+    	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
+    	{
+		while ((d = readdir(mydir)) != NULL)
+			printf("%s\n", d->d_name);     // fonction pour ls
+               	return (1);
+        }*/
     	return (0);
 }
         	
@@ -308,8 +314,8 @@ int	main(int argc, char **argv)
 	
 	token_lst = NULL;
 	rl = NULL;
-	/*mydir = opendir(dir_path);
-	if (mydir == NULL)
+	/*mydir = opendir(dir_path); 
+	if (mydir == NULL) // fonction ls check path valide
 	{
 		perror("opendir");
 		return 1;
@@ -339,14 +345,7 @@ int	main(int argc, char **argv)
         	free_token_lst(token_lst);
         	token_lst = NULL;
         	printf("\n");
-    	/*if (ft_strncmp(rl, "ls", 2) == 0)
-	{
-            	while ((d = readdir(mydir)) != NULL)
-               	 	printf("%s\n", d->d_name);     // fonction pour ls
-        }
-        else
-    		printf("%s\n", rl);
-    	closedir(mydir);*/
+    	//closedir(mydir);
     	}
     	return (0);
 }
