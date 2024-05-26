@@ -73,7 +73,7 @@ void	add_token(t_list **token_lst, t_list *new_token)
     }
 }
 
-t_tokens	get_symbol(char *symbol)
+t_tokens	get_symbol(char *symbol)	//check les diffrents symbol 
 {
 	t_tokens res;
 	
@@ -114,7 +114,7 @@ t_tokens	get_symbol(char *symbol)
 }
 	
 
-void	token(char *rl, t_list **token_lst)
+void	token(char *rl, t_list **token_lst) //assigne token et contenu 
 {
 	int	i;
 	int	j;
@@ -214,7 +214,7 @@ void	token(char *rl, t_list **token_lst)
             free(temp);
         }
 }*/
-char*	get_token_name(t_tokens token)
+char*	get_token_name(t_tokens token) //pour print les tokens
 {
 	if (token == NUMBER)
 		return "NUMBER";
@@ -272,6 +272,28 @@ void free_token_lst(t_list *token_lst)
 		free(temp);
 	}
 }
+
+int	check_command(t_list *token_lst) // test command de base avec le premier string
+{
+	t_list *current = token_lst;
+	if ((strncmp(current->content, "exit", 4) == 0) && !(current->next))
+	{
+    		free_token_lst(token_lst);
+    		exit(1) ;
+    	}
+    	if ((strncmp(current->content, "echo", 4) == 0) && (current->next) && current->next->token == SPC)
+    	{
+    		current = current->next;
+    		current = current->next;
+    		while (current)
+    		{
+    			printf("%s", current->content);
+    			current = current->next;
+    		}
+    		return (1);
+    	}
+    	return (0);
+}
         	
 int	main(int argc, char **argv)
 {
@@ -295,48 +317,32 @@ int	main(int argc, char **argv)
 	while (1)
 	{
 	//mydir = opendir(dir_path);
-	i = 1;
-	while (i < argc)
-	{
-		rl = ft_strjoin(rl, argv[i]);
-		i++;
-	}
-    	rl = readline("minishell > ");
-    	token(rl, &token_lst);
-    	t_list *current = token_lst;
-    	if (current->token == STRING && (strncmp(current->content, "exit", 4) == 0) && !(current->next))
-    	{
+		i = 1;
+		while (i < argc)
+		{
+			rl = ft_strjoin(rl, argv[i]);
+			i++;
+		}
+    		rl = readline("minishell > ");
+    		token(rl, &token_lst);
     		free(rl);
-    		free_token_lst(token_lst);
-    		break ;
-    	}
-    	if (current->token == STRING && (strncmp(current->content, "echo", 4) == 0) && (current->next) && current->next->token == SPC)
-    	{
-    		current = current->next;
-    		current = current->next;
-    		while (current)
-    		{
-    			printf("%s", current->content);
-    			current = current->next;
-    		}
-    	}
-    	else
-    	{		
-        	while (current)
-        	{
-        		printf(" %s ->  %s", get_token_name(current->token), current->content);
-        		printf("\n");
-        		current = current->next;
+    		t_list *current = token_lst;
+    		if (check_command(token_lst) == 0)
+    		{		
+        		while (current)
+        		{
+        			printf(" %s ->  %s", get_token_name(current->token), current->content);
+        			printf("\n");
+        			current = current->next;
+        		}
         	}
-        }
-        free_token_lst(token_lst);
-        token_lst = NULL;
-        free(rl);
-        printf("\n");
+        	free_token_lst(token_lst);
+        	token_lst = NULL;
+        	printf("\n");
     	/*if (ft_strncmp(rl, "ls", 2) == 0)
 	{
             	while ((d = readdir(mydir)) != NULL)
-               	 	printf("%s\n", d->d_name);
+               	 	printf("%s\n", d->d_name);     // fonction pour ls
         }
         else
     		printf("%s\n", rl);
