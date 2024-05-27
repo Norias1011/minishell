@@ -258,7 +258,7 @@ char*	get_token_name(t_tokens token) //pour print les tokens
 }
 
 
-void free_token_lst(t_list *token_lst)
+void	free_token_lst(t_list *token_lst)
 {
 	while (token_lst)
 	{
@@ -271,12 +271,12 @@ void free_token_lst(t_list *token_lst)
 
 int	check_newline(t_list *token_lst) // vrai (1) si -n
 {
-	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0) && token_lst->next->next->token == SPC)
+	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0) && (token_lst->next->next->token == SPC || token_lst->next->next->token == SEMICOLON))
 		return (1);
 	return (0);
 }
 
-void	echo(t_list *current)
+t_list	*echo(t_list *current)
 {
 	int	new_line;
 	
@@ -307,37 +307,37 @@ void	echo(t_list *current)
     			}
     		}
     		if (new_line == 0) // newline en fonction du booleen
-    			printf("\n");	
-    		if (current && current->token == SEMICOLON && current->next) // boucle recursive pour gerer echo a; echo b; par exemple
-    		{
-    			current = current->next;
-    			while (current && current->token == SPC)
-    				current = current->next;
-    			check_command(current);
-    		}
+    			printf("\n");
+    		return (current);
 }	
 
-int	check_command(t_list *token_lst) // test command de base avec le premier string
+t_list	*check_command(t_list *current) // test command de base avec le premier string
 {
-	t_list *current = token_lst;
+	//t_list *current = token_lst;
 	
+	while (current && current->token == SPC)
+    		current = current->next;
 	if ((strncmp(current->content, "exit", 4) == 0) && !(current->next))
 	{
-    		free_token_lst(token_lst);
+    		free_token_lst(current);
     		exit(1) ;
     	}
     	if ((strncmp(current->content, "echo", 4) == 0)) //&& (current->next) && current->next->token == SPC)
-    	{
-    		echo (current);
-    		return (1);
-    	}
+    		current = echo(current);
     	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
     	{
 		while ((d = readdir(mydir)) != NULL)
 			printf("%s\n", d->d_name);     // fonction pour ls
                	return (1);
         }*/
-    	return (0);
+        if (current && current->token == SEMICOLON && current->next)
+        {
+        	current = current->next;
+        	current = check_command(current);
+        }
+        if (current && current->token == SEMICOLON)
+        	current = current->next;
+    	return (current);
 }
         	
 int	main(int argc, char **argv)
@@ -374,14 +374,12 @@ int	main(int argc, char **argv)
     		t_list *current = token_lst;
     		while (token_lst->token == SPC && token_lst->next)
     			token_lst = token_lst->next;
-    		if (check_command(token_lst) == 0)
-    		{		
-        		while (current)
-        		{
-        			printf(" %s ->  %s", get_token_name(current->token), current->content);
-        			printf("\n");
-        			current = current->next;
-        		}
+    		current = check_command(current);
+    		while (current)
+        	{
+        		printf(" %s ->  %s", get_token_name(current->token), current->content);
+        		printf("\n");
+        		current = current->next;
         	}
         	free_token_lst(token_lst);
         	token_lst = NULL;
