@@ -73,7 +73,7 @@ void	add_token(t_list **token_lst, t_list *new_token)
     }
 }
 
-t_tokens	get_symbol(char *symbol)	//check les diffrents symbol 
+t_tokens	get_symbol(char *symbol)	//check les diffrents symboles
 {
 	t_tokens res;
 	
@@ -114,7 +114,7 @@ t_tokens	get_symbol(char *symbol)	//check les diffrents symbol
 }
 	
 
-void	token(char *rl, t_list **token_lst) //assigne token et contenu 
+void	token(char *rl, t_list **token_lst) //assigne token et contenu 4 boucles une fonction en plus pour les symbols
 {
 	int	i;
 	int	j;
@@ -273,7 +273,7 @@ void free_token_lst(t_list *token_lst)
 	}
 }
 
-int	check_newline(t_list *token_lst)
+int	check_newline(t_list *token_lst) // vrai (1) si -n
 {
 	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0))
 		return (1);
@@ -284,6 +284,9 @@ int	check_newline(t_list *token_lst)
 int	check_command(t_list *token_lst) // test command de base avec le premier string
 {
 	t_list *current = token_lst;
+	int	new_line;
+	
+	new_line = 0;
 	if ((strncmp(current->content, "exit", 4) == 0) && !(current->next))
 	{
     		free_token_lst(token_lst);
@@ -294,27 +297,21 @@ int	check_command(t_list *token_lst) // test command de base avec le premier str
     		current = current->next;
     		if (current && current->token == SPC)
     			current = current->next;
-    		if (check_newline(current) == 0)
-    		{
-    			while (current)
-    			{
-    				printf("%s", current->content);
-    				current = current->next;
-    			}
-    				printf("\n");
-    		}
-    		else
+    		while (check_newline(current) == 1) //check s'il y a plusieurs -n a la suite et les passes fout newline à 1 (bool)
     		{
     			current = current->next;
     			current = current->next;
     			if (current && current->token == SPC)
     				current = current->next;
-    			while (current)
-    			{
-    				printf("%s", current->content);
-    				current = current->next;
-    			}
-    		}	
+    			new_line = 1;
+    		}
+    		while (current) //ecris le reste
+    		{
+    			printf("%s", current->content);
+    			current = current->next;
+    		}
+    		if (new_line == 0) // newline en fonction du booleen
+    			printf("\n");	
     		return (1);
     	}
     	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
@@ -335,7 +332,7 @@ int	main(int argc, char **argv)
 	//DIR *mydir;
 	//struct dirent *d;
 	t_list	*token_lst;
-	//const char *dir_path = "/home/brh/Bureau/minishell";
+	//const char *dir_path = "/home/brh/Bureau/minishell"; //mettre ton path si tu veux tester
 	
 	token_lst = NULL;
 	rl = NULL;
@@ -349,7 +346,7 @@ int	main(int argc, char **argv)
 	{
 	//mydir = opendir(dir_path);
 		i = 1;
-		while (i < argc)
+		while (i < argc) //on utilisera stdinput et gnl pour mettre dans rl
 		{
 			rl = ft_strjoin(rl, argv[i]);
 			i++;
@@ -366,7 +363,6 @@ int	main(int argc, char **argv)
         			printf("\n");
         			current = current->next;
         		}
-        		printf("\n");
         	}
         	free_token_lst(token_lst);
         	token_lst = NULL;
