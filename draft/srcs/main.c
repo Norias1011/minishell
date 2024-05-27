@@ -212,6 +212,32 @@ int	token_symbol(char *rl, t_list *new, int i)
 	return (j);
 }
 
+int	quote_handler(char *rl, t_list *new, int i)
+{
+	int	j;
+	
+	j = 0;
+	while (rl[i + j] && rl[i + j] != rl[i - 1])
+		j++;
+	new->content = malloc(sizeof(char) * (j + 1));
+	if (!new->content)
+	{
+		free(new);
+		return (0);
+	}
+	if (j > 0)
+	{
+		ft_strlcpy(new->content, rl + i, j + 1);
+		new->token = QUOTE_STRING;
+	}
+	else
+	{
+		ft_strlcpy(new->content, "", j + 1);
+		new->token = SPC;
+	}
+	return (j);
+}
+
 void	token(char *rl, t_list **token_lst)
 {
 	int	i;
@@ -235,6 +261,13 @@ void	token(char *rl, t_list **token_lst)
 			add = token_symbol(rl, new, i);
 		new->next = NULL;
 		i += add;
+		if (new->token == QUOTE || new->token == DOUBLEQUOTE)
+		{
+			new = malloc(sizeof(t_list));
+			i += quote_handler(rl, new, i);
+			add_token(token_lst, new);
+			continue ;
+		}	
 		if (new->token == BACKSLASH && (is_metachar(rl[i]) == 0))
 			continue ;
 		else 
@@ -417,17 +450,20 @@ int	main(int argc, char **argv)
     		token(rl, &token_lst);
     		free(rl);
     		t_list *current = token_lst;
-    		while (token_lst->token == SPC && token_lst->next)
-    			token_lst = token_lst->next;
-    		current = check_command(current);
-    		while (current)
-        	{
-        		printf(" %s ->  %s", get_token_name(current->token), current->content);
-        		printf("\n");
-        		current = current->next;
+    		if(token_lst)
+    		{
+    			while (token_lst->token == SPC && token_lst->next)
+    				token_lst = token_lst->next;
+    			current = check_command(current);
+    			while (current)
+        		{
+        			printf(" %s ->  %s", get_token_name(current->token), current->content);
+        			printf("\n");
+        			current = current->next;
+        		}
+        		free_token_lst(token_lst);
+        		token_lst = NULL;
         	}
-        	free_token_lst(token_lst);
-        	token_lst = NULL;
     	//closedir(mydir);
     	}
     	return (0);

@@ -47,6 +47,7 @@ typedef enum e_tokens
 	SEMICOLON,
 	LEFT_ARROW,
 	RIGHT_ARROW,
+	QUOTE_STRING,
 }		t_tokens;
 
 typedef struct s_list
