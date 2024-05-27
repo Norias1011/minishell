@@ -273,6 +273,14 @@ void free_token_lst(t_list *token_lst)
 	}
 }
 
+int	check_newline(t_list *token_lst)
+{
+	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0))
+		return (1);
+	return (0);
+}
+	
+
 int	check_command(t_list *token_lst) // test command de base avec le premier string
 {
 	t_list *current = token_lst;
@@ -281,15 +289,32 @@ int	check_command(t_list *token_lst) // test command de base avec le premier str
     		free_token_lst(token_lst);
     		exit(1) ;
     	}
-    	if ((strncmp(current->content, "echo", 4) == 0) && (current->next) && current->next->token == SPC)
+    	if ((strncmp(current->content, "echo", 4) == 0)) //&& (current->next) && current->next->token == SPC)
     	{
     		current = current->next;
-    		current = current->next;
-    		while (current)
-    		{
-    			printf("%s", current->content);
+    		if (current && current->token == SPC)
     			current = current->next;
+    		if (check_newline(current) == 0)
+    		{
+    			while (current)
+    			{
+    				printf("%s", current->content);
+    				current = current->next;
+    			}
+    				printf("\n");
     		}
+    		else
+    		{
+    			current = current->next;
+    			current = current->next;
+    			if (current && current->token == SPC)
+    				current = current->next;
+    			while (current)
+    			{
+    				printf("%s", current->content);
+    				current = current->next;
+    			}
+    		}	
     		return (1);
     	}
     	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
@@ -341,10 +366,10 @@ int	main(int argc, char **argv)
         			printf("\n");
         			current = current->next;
         		}
+        		printf("\n");
         	}
         	free_token_lst(token_lst);
         	token_lst = NULL;
-        	printf("\n");
     	//closedir(mydir);
     	}
     	return (0);
