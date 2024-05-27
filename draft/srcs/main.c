@@ -295,8 +295,7 @@ t_list	*echo(t_list *current)
 	int	new_line;
 	
 	new_line = 0;
-	if (current->next)
-    		current = current->next;
+	current = current->next;
     	if (current && current->token == SPC)
     		current = current->next;
     	while (check_newline(current) == 1) //check s'il y a plusieurs -n a la suite et les passes fout newline à 1 (bool)
@@ -336,7 +335,7 @@ t_list	*check_command(t_list *current) // test command de base avec le premier s
     		free_token_lst(current);
     		exit(1) ;
     	}
-    	if ((strncmp(current->content, "echo", 4) == 0)) //&& (current->next) && current->next->token == SPC)
+    	if ((strncmp(current->content, "echo", 5) == 0)) //&& (current->next) && current->next->token == SPC)
     		current = echo(current);
     	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
     	{
