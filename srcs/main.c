@@ -294,7 +294,8 @@ int	check_command(t_list *token_lst) // test command de base avec le premier str
     	}
     	if ((strncmp(current->content, "echo", 4) == 0)) //&& (current->next) && current->next->token == SPC)
     	{
-    		current = current->next;
+    		if (current->next)
+    			current = current->next;
     		if (current && current->token == SPC)
     			current = current->next;
     		while (check_newline(current) == 1) //check s'il y a plusieurs -n a la suite et les passes fout newline à 1 (bool)
@@ -305,13 +306,20 @@ int	check_command(t_list *token_lst) // test command de base avec le premier str
     				current = current->next;
     			new_line = 1;
     		}
-    		while (current) //ecris le reste
+    		while (current && current->token != SEMICOLON) //ecris le reste
     		{
     			printf("%s", current->content);
     			current = current->next;
     		}
     		if (new_line == 0) // newline en fonction du booleen
     			printf("\n");	
+    		if (current && current->token == SEMICOLON) // boucle recursive pour gerer echo a; echo b; par exemple
+    		{
+    			current = current->next;
+    			while (current->token == SPC)
+    				current = current->next;
+    			check_command(current);
+    		}
     		return (1);
     	}
     	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
@@ -355,6 +363,8 @@ int	main(int argc, char **argv)
     		token(rl, &token_lst);
     		free(rl);
     		t_list *current = token_lst;
+    		while (token_lst->token == SPC && token_lst->next)
+    			token_lst = token_lst->next;
     		if (check_command(token_lst) == 0)
     		{		
         		while (current)
@@ -369,4 +379,4 @@ int	main(int argc, char **argv)
     	//closedir(mydir);
     	}
     	return (0);
-}
+} // https://github.com/iciamyplant/Minishell/blob/master/tester/test.sh
