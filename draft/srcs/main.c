@@ -263,7 +263,6 @@ void	token(char *rl, t_list **token_lst)
 		i += add;
 		if (new->token == QUOTE || new->token == DOUBLEQUOTE)
 		{
-			new = malloc(sizeof(t_list));
 			i += quote_handler(rl, new, i);
 			add_token(token_lst, new);
 			continue ;
@@ -371,7 +370,7 @@ t_list	*echo(t_list *current)
     			current = current->next;
     		new_line = 1;
     	}
-    	while (current && current->token != SEMICOLON) //ecris le reste
+    	while (current && current->token != SEMICOLON) //&& !(strncmp(current->content, "\\n", 3) == 0)) //ecris le reste
     	{
     		if (current->token == SPC && ft_strlen(current->content) > 1)
     		{
@@ -392,29 +391,31 @@ t_list	*echo(t_list *current)
 t_list	*check_command(t_list *current) // test command de base avec le premier string
 {
 	//t_list *current = token_lst;
+	int	check;
 	
-	while (current && current->token == SPC)
+	check = 0;
+	while (current && current->token == SPC) //|| strncmp(current->content, "\\n", 3) == 0))
     		current = current->next;
 	if ((strncmp(current->content, "exit", 4) == 0) && !(current->next))
 	{
     		free_token_lst(current);
     		exit(1) ;
     	}
-    	if ((strncmp(current->content, "echo", 5) == 0)) //&& (current->next) && current->next->token == SPC)
+    	if ((strncmp(current->content, "echo", 5) == 0))
+    	{
     		current = echo(current);
+    		check = 1;
+    	}
     	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
     	{
 		while ((d = readdir(mydir)) != NULL)
 			printf("%s\n", d->d_name);     // fonction pour ls
                	return (1);
         }*/
-        if (current && current->token == SEMICOLON && current->next)
-        {
-        	current = current->next;
-        	current = check_command(current);
-        }
         if (current && current->token == SEMICOLON)
         	current = current->next;
+        if (current && check == 1)
+        	check_command(current);
     	return (current);
 }
         	
@@ -450,7 +451,7 @@ int	main(int argc, char **argv)
     		token(rl, &token_lst);
     		free(rl);
     		t_list *current = token_lst;
-    		if(token_lst)
+    		if(current)
     		{
     			while (token_lst->token == SPC && token_lst->next)
     				token_lst = token_lst->next;
