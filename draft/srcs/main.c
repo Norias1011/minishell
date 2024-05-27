@@ -274,7 +274,7 @@ int	check_newline(t_list *token_lst) // vrai (1) si -n
 	int	i;
 	
 	i = 0;
-	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0) && (token_lst->next->next->token == SPC || token_lst->next->next->token == SEMICOLON))
+	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0))
 	{
 		while (i < ft_strlen(token_lst->next->content)) // gere echo -nnnn test
 		{
@@ -282,7 +282,10 @@ int	check_newline(t_list *token_lst) // vrai (1) si -n
 				return (0);
 			i++;
 		}
-		return (1);
+		if (!token_lst->next->next)
+			return (1);
+		if ((token_lst->next->next->token == SPC || token_lst->next->next->token == SEMICOLON))
+			return (1);
 	}
 	return (0);
 }
