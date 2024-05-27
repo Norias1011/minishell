@@ -271,8 +271,19 @@ void	free_token_lst(t_list *token_lst)
 
 int	check_newline(t_list *token_lst) // vrai (1) si -n
 {
+	int	i;
+	
+	i = 0;
 	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0) && (token_lst->next->next->token == SPC || token_lst->next->next->token == SEMICOLON))
+	{
+		while (i < ft_strlen(token_lst->next->content))
+		{
+			if (token_lst->next->content[i] != 'n')
+				return (0);
+			i++;
+		}
 		return (1);
+	}
 	return (0);
 }
 
@@ -282,33 +293,33 @@ t_list	*echo(t_list *current)
 	
 	new_line = 0;
 	if (current->next)
-    			current = current->next;
+    		current = current->next;
+    	if (current && current->token == SPC)
+    		current = current->next;
+    	while (check_newline(current) == 1) //check s'il y a plusieurs -n a la suite et les passes fout newline à 1 (bool)
+    	{
+    		current = current->next;
+    		current = current->next;
     		if (current && current->token == SPC)
     			current = current->next;
-    		while (check_newline(current) == 1) //check s'il y a plusieurs -n a la suite et les passes fout newline à 1 (bool)
+    		new_line = 1;
+    	}
+    	while (current && current->token != SEMICOLON) //ecris le reste
+    	{
+    		if (current->token == SPC && ft_strlen(current->content) > 1)
     		{
+    			printf("%c", ' ');
     			current = current->next;
-    			current = current->next;
-    			if (current && current->token == SPC)
-    				current = current->next;
-    			new_line = 1;
     		}
-    		while (current && current->token != SEMICOLON) //ecris le reste
+    		else
     		{
-    			if (current->token == SPC && ft_strlen(current->content) > 1)
-    			{
-    				printf("%c", ' ');
-    				current = current->next;
-    			}
-    			else
-    			{
-    				printf("%s", current->content);	
-    				current = current->next;
-    			}
+    			printf("%s", current->content);	
+    			current = current->next;
     		}
-    		if (new_line == 0) // newline en fonction du booleen
-    			printf("\n");
-    		return (current);
+    	}
+    	if (new_line == 0) // newline en fonction du booleen
+    		printf("\n");
+    	return (current);
 }	
 
 t_list	*check_command(t_list *current) // test command de base avec le premier string
