@@ -113,6 +113,35 @@ t_tokens	get_symbol(char *symbol)	//check les diffrents symboles
 	return (res);
 }
 
+int	is_metachar(char c)
+{
+	if (c == '\'')
+		return (1);
+	if (c <= 13 && c >= 11)
+		return (1);
+	if (c == '"')
+		return (1);
+	if (c == '&')
+		return (1);
+	if (c == ';')
+		return (1);
+	if (c == '<')
+		return (1);
+	if (c == '>')
+		return (1);
+	if (c == '(')
+		return (1);
+	if (c == ')')
+		return (1);
+	if (c == '$')
+		return (1);
+	if (c == ' ')
+		return (1);
+	if (c == '\\')
+		return (1);
+	return (0);
+}
+
 int	token_digit(char *rl, t_list *new, int i)
 {
 	int	j;
@@ -205,8 +234,11 @@ void	token(char *rl, t_list **token_lst)
 		else
 			add = token_symbol(rl, new, i);
 		new->next = NULL;
-		add_token(token_lst, new);
 		i += add;
+		if (new->token == BACKSLASH && (is_metachar(rl[i]) == 0))
+			continue ;
+		else 
+			add_token(token_lst, new);
 	}
 }
 
