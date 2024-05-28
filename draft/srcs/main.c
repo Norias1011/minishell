@@ -97,27 +97,15 @@ int	is_metachar(char c)
 {
 	if (c == '\'')
 		return (1);
-	if (c <= 13 && c >= 11)
-		return (1);
 	if (c == '"')
-		return (1);
-	if (c == '&')
-		return (1);
-	if (c == ';')
 		return (1);
 	if (c == '<')
 		return (1);
 	if (c == '>')
 		return (1);
-	if (c == '(')
-		return (1);
-	if (c == ')')
-		return (1);
-	if (c == '$')
+	if (c == '|')
 		return (1);
 	if (c == ' ')
-		return (1);
-	if (c == '\\')
 		return (1);
 	return (0);
 }
@@ -127,7 +115,7 @@ int	token_string(char *rl, t_token *new, int i)
 	int	j;
 	
 	j = 0;
-	while (ft_isalpha(rl[i + j]) || ft_isdigit(rl[i + j]))
+	while ((rl[i + j]) && (is_metachar(rl[i + j]) == 0))
 		j++;
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
@@ -251,7 +239,7 @@ void	token(char *rl, t_token **token_lst)
 		new = malloc(sizeof(t_token));
 		if (!new)
 			return ;
-		if (ft_isalpha(rl[i]) || ft_isdigit(rl[i]))
+		if ((ft_isalpha(rl[i]) || ft_isdigit(rl[i])) && (is_metachar(rl[i]) == 0))
 			add = token_string(rl, new, i);
 		else if (rl[i] == ' ')
 			add = token_space(rl, new, i);
