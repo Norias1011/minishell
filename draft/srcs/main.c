@@ -78,38 +78,18 @@ t_token_lex	get_symbol(char *symbol)	//check les diffrents symboles
 	t_token_lex res;
 	
 	res = SYMBOL;
-	if (symbol[0] == '+')
-		res = ADD;
-	if (symbol[0] == '-')
-		res = SOUSTRACT;
-	if (symbol[0] == '*')
-		res = MULTI;
-	if (symbol[0] == '/')
-		res = SLASH;
-	if (symbol[0] == '\\')
-		res = BACKSLASH;
-	if (symbol[0] == ',')
-		res = COMA;
-	if (symbol[0] == '.')
-		res = DOT;
 	if (symbol[0] == '-')
 		res = DASH;
 	if (symbol[0] == '\'')
 		res = QUOTE;
 	if (symbol[0] == '"')
 		res = DOUBLEQUOTE;
-	if (symbol[0] == '_')
-		res = UNDERSCORE;
 	if (symbol[0] == '|')
 		res = PIPE;
-	if (symbol[0] == '=')
-		res = EQUAL;
-	if (symbol[0] == ';')
-		res = SEMICOLON;
 	if (symbol[0] == '<')
-		res = LEFT_ARROW;
+		res = L_ARROW;
 	if (symbol[0] == '>')
-		res = RIGHT_ARROW;
+		res = R_ARROW;
 	return (res);
 }
 
@@ -142,30 +122,12 @@ int	is_metachar(char c)
 	return (0);
 }
 
-int	token_digit(char *rl, t_token *new, int i)
-{
-	int	j;
-	
-	j = 0;
-	while (ft_isdigit(rl[i + j]))
-		j++;
-	new->content = malloc(sizeof(char) * (j + 1));
-	if (!new->content)
-	{
-		free(new);
-		return (0);
-	}
-	ft_strlcpy(new->content, rl + i, j + 1);
-	new->token = NUMBER;
-	return (j);
-}
-
 int	token_string(char *rl, t_token *new, int i)
 {
 	int	j;
 	
 	j = 0;
-	while (ft_isalpha(rl[i + j]))
+	while (ft_isalpha(rl[i + j]) || ft_isdigit(rl[i + j]))
 		j++;
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
@@ -212,8 +174,6 @@ int	token_symbol(char *rl, t_token *new, int i)
 	return (j);
 }
 
-//void	single_or_double_quote(char *rl, t_token **token_lst, int i);
-
 int	quote_handler(char *rl, t_token *new, int i)
 {
 	int	j;
@@ -249,6 +209,34 @@ int	quote_handler(char *rl, t_token *new, int i)
 	}
 	return (j);
 }
+int	check_arrow(char *rl, t_token *new, int i)
+{
+	if (new->token == L_ARROW && rl[i] == '<')
+	{
+		new->content = malloc(sizeof(char) * (3));
+		if (!new->content)
+		{
+			free(new);
+			return (0);
+		}
+		ft_strlcpy(new->content, rl + i - 1, 3);
+		new->token = L_D_ARROW;
+		return (1);
+	}
+	if (new->token == R_ARROW && rl[i] == '>')
+	{
+		new->content = malloc(sizeof(char) * (3));
+		if (!new->content)
+		{
+			free(new);
+			return (0);
+		}
+		ft_strlcpy(new->content, rl + i - 1, 3);
+		new->token = R_D_ARROW;
+		return (1);
+	}
+	return (0);
+}
 
 void	token(char *rl, t_token **token_lst)
 {
@@ -263,9 +251,7 @@ void	token(char *rl, t_token **token_lst)
 		new = malloc(sizeof(t_token));
 		if (!new)
 			return ;
-		if (ft_isdigit(rl[i])) 
-			add = token_digit(rl, new, i);
-		else if (ft_isalpha(rl[i]))
+		if (ft_isalpha(rl[i]) || ft_isdigit(rl[i]))
 			add = token_string(rl, new, i);
 		else if (rl[i] == ' ')
 			add = token_space(rl, new, i);
@@ -284,15 +270,18 @@ void	token(char *rl, t_token **token_lst)
 			else
 				add_token(token_lst, new);
 			continue ;
-		}	
+		}
+		if (new->token == L_ARROW || new->token == R_ARROW)
+		{
+			add = check_arrow(rl, new, i);
+			i += add;
+		}
 		add_token(token_lst, new);
 	}
 }
 
 char*	get_token_name(t_token_lex token) //pour print les tokens
 {
-	if (token == NUMBER)
-		return "NUMBER";
 	if (token == STRING)
 		return "STRING";
 	if (token == SYMBOL)
@@ -301,22 +290,8 @@ char*	get_token_name(t_token_lex token) //pour print les tokens
 		return "SPC";
 	if (token == PIPE)
 		return "PIPE";
-	if (token == ADD)
-		return "ADD";
-	if (token == SOUSTRACT)
-		return "SOUSTRACT";
-	if (token == MULTI)
-		return "MULTI";
 	if (token == DOLLAR)
 		return "DOLLAR";
-	if (token == SLASH)
-		return "SLASH";
-	if (token == BACKSLASH)
-		return "BACKSLASH";
-	if (token == COMA)
-		return "COMA";
-	if (token == DOT)
-		return "DOT";
 	if (token == DASH)
 		return "DASH";
 	if (token == QUOTE)
@@ -325,16 +300,16 @@ char*	get_token_name(t_token_lex token) //pour print les tokens
 		return "DOUBLEQUOTE";
 	if (token == UNDERSCORE)
 		return "UNDERSCORE";
-	if (token == EQUAL)
-		return "EQUAL";
-	if (token == SEMICOLON)
-		return "SEMICOLON";
-	if (token == LEFT_ARROW)
-		return "LEFT_ARROW";
-	if (token == RIGHT_ARROW)
-		return "RIGHT_ARROW";
+	if (token == L_ARROW)
+		return "L_ARROW";
+	if (token == R_ARROW)
+		return "R_ARROW";
 	if (token == QUOTE_STRING)
 		return "QUOTE_STRING";
+	if (token == L_D_ARROW)
+		return "L_D_ARROW";
+	if (token == R_D_ARROW)
+		return "R_D_ARROW";
 	return "UNKNOW";
 }
 
