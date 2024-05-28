@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/28 15:10:52 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/28 17:19:27 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_token
 typedef struct s_minishell
 {
 	t_token			*token;
-	char			**env;
+	t_env			*env_s;
 	char			*prompt;
 }					t_minishell;
 
@@ -73,5 +73,6 @@ void				print_prompt(void);
 /* init_all.c functions */
 
 int					init_mini_shell(t_minishell *minishell, char **env);
+int					init_env(t_minishell *minishell, char **env);
 
 #endif
