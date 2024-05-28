@@ -212,13 +212,23 @@ int	token_symbol(char *rl, t_list *new, int i)
 	return (j);
 }
 
+//void	single_or_double_quote(char *rl, t_list **token_lst, int i);
+
 int	quote_handler(char *rl, t_list *new, int i)
 {
 	int	j;
+	int	is_dollar;
 	
 	j = 0;
+	is_dollar = 0;
 	while (rl[i + j] && rl[i + j] != rl[i - 1])
+	{
+		if (rl[i + j] == '$' && rl[i - 1] == '"')
+			is_dollar = 1;
 		j++;
+	}
+	if (i + j == ft_strlen(rl) && rl[i + j] != rl[i - 1] && j != 0)
+		return (-1);
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
 	{
@@ -229,6 +239,8 @@ int	quote_handler(char *rl, t_list *new, int i)
 	{
 		ft_strlcpy(new->content, rl + i, j + 1);
 		new->token = QUOTE_STRING;
+		if (is_dollar == 1)
+			new->token = STRING;
 	}
 	else
 	{
@@ -261,16 +273,19 @@ void	token(char *rl, t_list **token_lst)
 			add = token_symbol(rl, new, i);
 		new->next = NULL;
 		i += add;
-		if (new->token == QUOTE || new->token == DOUBLEQUOTE)
+		if ((new->token == QUOTE || new->token == DOUBLEQUOTE))
 		{
-			i += quote_handler(rl, new, i);
-			add_token(token_lst, new);
+			add = quote_handler(rl, new, i);
+			if (add != -1)
+			{
+				i += add;
+				add_token(token_lst, new);
+			}
+			else
+				add_token(token_lst, new);
 			continue ;
 		}	
-		if (new->token == BACKSLASH && (is_metachar(rl[i]) == 0))
-			continue ;
-		else 
-			add_token(token_lst, new);
+		add_token(token_lst, new);
 	}
 }
 
@@ -348,7 +363,7 @@ int	check_newline(t_list *token_lst) // vrai (1) si -n
 		}
 		if (!token_lst->next->next)
 			return (1);
-		if ((token_lst->next->next->token == SPC || token_lst->next->next->token == SEMICOLON))
+		if ((token_lst->next->next->token == SPC || token_lst->next->next->token == PIPE))
 			return (1);
 	}
 	return (0);
@@ -370,7 +385,7 @@ t_list	*echo(t_list *current)
     			current = current->next;
     		new_line = 1;
     	}
-    	while (current && current->token != SEMICOLON) //&& !(strncmp(current->content, "\\n", 3) == 0)) //ecris le reste
+    	while (current && current->token != PIPE) //&& !(strncmp(current->content, "\\n", 3) == 0)) //ecris le reste
     	{
     		if (current->token == SPC && ft_strlen(current->content) > 1)
     		{
@@ -412,7 +427,7 @@ t_list	*check_command(t_list *current) // test command de base avec le premier s
 			printf("%s\n", d->d_name);     // fonction pour ls
                	return (1);
         }*/
-        if (current && current->token == SEMICOLON)
+        if (current && current->token == PIPE)
         	current = current->next;
         if (current && check == 1)
         	current = check_command(current);

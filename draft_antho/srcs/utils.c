@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../include/minishell.h"
 
 /* function to print the prompt during the while(1) loop*/
 void	print_prompt(void)
