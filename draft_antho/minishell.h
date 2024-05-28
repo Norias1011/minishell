@@ -6,13 +6,14 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/28 11:54:35 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/28 15:10:52 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include "libft.h"
 # include <dirent.h>
 # include <errno.h>
 # include <readline/history.h>
@@ -36,13 +37,20 @@
 
 typedef enum token_lex
 {
-	PIPE,
-	L_ARROW,
-	R_ARROW,
-	L_D_ARROW,
-	R_D_ARROW,
-	WORD,
+	PIPE,      // |
+	L_ARROW,   //<
+	R_ARROW,   //>
+	L_D_ARROW, //<<
+	R_D_ARROW, //>>
+	WORD,      // command
 }					t_token_lex;
+
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}					t_env;
 
 typedef struct s_token
 {
@@ -60,6 +68,10 @@ typedef struct s_minishell
 
 /* utils.c functions */
 
-char				*print_prompt(void);
+void				print_prompt(void);
+
+/* init_all.c functions */
+
+int					init_mini_shell(t_minishell *minishell, char **env);
 
 #endif

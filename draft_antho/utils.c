@@ -6,13 +6,14 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:03:28 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/28 11:56:18 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/28 13:59:02 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*print_prompt(void)
+/* function to print the prompt during the while(1) loop*/
+void	print_prompt(void)
 {
 	printf("%s░▒▓██████████████▓▒░░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓▒░░▒▓███████▓▒",
 		GREEN);
@@ -31,5 +32,4 @@ char	*print_prompt(void)
 	printf("▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░        \n");
 	printf("░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓");
 	printf("▒░░▒▓█▓▒░▒▓████████▓▒░▒▓████████▓▒░▒▓████████▓▒░ %s\n", DEFAULT);
-	return ("$>");
 }
