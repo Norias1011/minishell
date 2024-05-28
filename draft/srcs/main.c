@@ -237,7 +237,7 @@ int	quote_handler(char *rl, t_token *new, int i)
 	}
 	if (j == 0 && rl[i] != ft_strlen(rl))
 	{
-		ft_strlcpy(new->content, "", j + 1);
+		ft_strlcpy(new->content, " ", j + 1);
 		new->token = SPC;
 	}
 	else
@@ -333,6 +333,8 @@ char*	get_token_name(t_token_lex token) //pour print les tokens
 		return "LEFT_ARROW";
 	if (token == RIGHT_ARROW)
 		return "RIGHT_ARROW";
+	if (token == QUOTE_STRING)
+		return "QUOTE_STRING";
 	return "UNKNOW";
 }
 
@@ -411,12 +413,12 @@ t_token	*check_command(t_token *current) // test command de base avec le premier
 	check = 0;
 	while (current && current->token == SPC) //|| strncmp(current->content, "\\n", 3) == 0))
     		current = current->next;
-	if ((strncmp(current->content, "exit", 4) == 0) && !(current->next))
+	if (current && (strncmp(current->content, "exit", 4) == 0) && !(current->next))
 	{
     		free_token_lst(current);
     		exit(1) ;
     	}
-    	if ((strncmp(current->content, "echo", 5) == 0))
+    	if (current && (strncmp(current->content, "echo", 5) == 0))
     	{
     		current = echo(current);
     		check = 1;
