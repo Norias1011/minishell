@@ -415,7 +415,7 @@ t_list	*check_command(t_list *current) // test command de base avec le premier s
         if (current && current->token == SEMICOLON)
         	current = current->next;
         if (current && check == 1)
-        	check_command(current);
+        	current = check_command(current);
     	return (current);
 }
         	
