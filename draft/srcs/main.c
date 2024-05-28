@@ -22,7 +22,7 @@ int	ft_strlen(const char *str)
 	return (i);
 }
 
-t_list	*get_last(t_list *stash)
+t_token	*get_last(t_token *stash)
 {
 	if (stash == NULL)
 		return (NULL);
@@ -60,9 +60,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (res);
 }
 
-void	add_token(t_list **token_lst, t_list *new_token)
+void	add_token(t_token **token_lst, t_token *new_token)
 {
-    t_list *last = get_last(*token_lst);
+    t_token *last = get_last(*token_lst);
     if (last == NULL)
     {
         *token_lst = new_token;
@@ -73,9 +73,9 @@ void	add_token(t_list **token_lst, t_list *new_token)
     }
 }
 
-t_tokens	get_symbol(char *symbol)	//check les diffrents symboles
+t_token_lex	get_symbol(char *symbol)	//check les diffrents symboles
 {
-	t_tokens res;
+	t_token_lex res;
 	
 	res = SYMBOL;
 	if (symbol[0] == '+')
@@ -142,7 +142,7 @@ int	is_metachar(char c)
 	return (0);
 }
 
-int	token_digit(char *rl, t_list *new, int i)
+int	token_digit(char *rl, t_token *new, int i)
 {
 	int	j;
 	
@@ -160,7 +160,7 @@ int	token_digit(char *rl, t_list *new, int i)
 	return (j);
 }
 
-int	token_string(char *rl, t_list *new, int i)
+int	token_string(char *rl, t_token *new, int i)
 {
 	int	j;
 	
@@ -178,7 +178,7 @@ int	token_string(char *rl, t_list *new, int i)
 	return (j);
 }
 
-int	token_space(char *rl, t_list *new, int i)
+int	token_space(char *rl, t_token *new, int i)
 {
 	int	j;
 	
@@ -196,7 +196,7 @@ int	token_space(char *rl, t_list *new, int i)
 	return (j);
 }
 
-int	token_symbol(char *rl, t_list *new, int i)
+int	token_symbol(char *rl, t_token *new, int i)
 {	
 	int	j;
 	
@@ -212,9 +212,9 @@ int	token_symbol(char *rl, t_list *new, int i)
 	return (j);
 }
 
-//void	single_or_double_quote(char *rl, t_list **token_lst, int i);
+//void	single_or_double_quote(char *rl, t_token **token_lst, int i);
 
-int	quote_handler(char *rl, t_list *new, int i)
+int	quote_handler(char *rl, t_token *new, int i)
 {
 	int	j;
 	int	is_dollar;
@@ -227,7 +227,7 @@ int	quote_handler(char *rl, t_list *new, int i)
 			is_dollar = 1;
 		j++;
 	}
-	if (i + j == ft_strlen(rl) && rl[i + j] != rl[i - 1] && j != 0)
+	if (i + j == ft_strlen(rl) && rl[i + j] != rl[i - 1]) //&& j != 0)
 		return (-1);
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
@@ -235,32 +235,32 @@ int	quote_handler(char *rl, t_list *new, int i)
 		free(new);
 		return (0);
 	}
-	if (j > 0)
+	if (j == 0 && rl[i] != ft_strlen(rl))
+	{
+		ft_strlcpy(new->content, "", j + 1);
+		new->token = SPC;
+	}
+	else
 	{
 		ft_strlcpy(new->content, rl + i, j + 1);
 		new->token = QUOTE_STRING;
 		if (is_dollar == 1)
 			new->token = STRING;
 	}
-	else
-	{
-		ft_strlcpy(new->content, "", j + 1);
-		new->token = SPC;
-	}
 	return (j);
 }
 
-void	token(char *rl, t_list **token_lst)
+void	token(char *rl, t_token **token_lst)
 {
 	int	i;
 	int	add;
-	t_list *new;
+	t_token *new;
 	
 	i = 0;
 	add = 0;
 	while (rl[i])
 	{
-		new = malloc(sizeof(t_list));
+		new = malloc(sizeof(t_token));
 		if (!new)
 			return ;
 		if (ft_isdigit(rl[i])) 
@@ -278,7 +278,7 @@ void	token(char *rl, t_list **token_lst)
 			add = quote_handler(rl, new, i);
 			if (add != -1)
 			{
-				i += add;
+				i += add + 1;
 				add_token(token_lst, new);
 			}
 			else
@@ -289,7 +289,7 @@ void	token(char *rl, t_list **token_lst)
 	}
 }
 
-char*	get_token_name(t_tokens token) //pour print les tokens
+char*	get_token_name(t_token_lex token) //pour print les tokens
 {
 	if (token == NUMBER)
 		return "NUMBER";
@@ -337,18 +337,18 @@ char*	get_token_name(t_tokens token) //pour print les tokens
 }
 
 
-void	free_token_lst(t_list *token_lst)
+void	free_token_lst(t_token *token_lst)
 {
 	while (token_lst)
 	{
-		t_list *temp = token_lst;
+		t_token *temp = token_lst;
 		token_lst = token_lst->next;
 		free(temp->content);
 		free(temp);
 	}
 }
 
-int	check_newline(t_list *token_lst) // vrai (1) si -n
+int	check_newline(t_token *token_lst) // vrai (1) si -n
 {
 	int	i;
 	
@@ -369,7 +369,7 @@ int	check_newline(t_list *token_lst) // vrai (1) si -n
 	return (0);
 }
 
-t_list	*echo(t_list *current)
+t_token	*echo(t_token *current)
 {
 	int	new_line;
 	
@@ -403,9 +403,9 @@ t_list	*echo(t_list *current)
     	return (current);
 }	
 
-t_list	*check_command(t_list *current) // test command de base avec le premier string
+t_token	*check_command(t_token *current) // test command de base avec le premier string
 {
-	//t_list *current = token_lst;
+	//t_token *current = token_lst;
 	int	check;
 	
 	check = 0;
@@ -442,7 +442,7 @@ int	main(int argc, char **argv)
 	char	*rl;
 	//DIR *mydir;
 	//struct dirent *d;
-	t_list	*token_lst;
+	t_token	*token_lst;
 	//const char *dir_path = "/home/brh/Bureau/minishell"; //mettre ton path si tu veux tester
 	
 	token_lst = NULL;
@@ -465,7 +465,7 @@ int	main(int argc, char **argv)
     		rl = readline("minishell > ");
     		token(rl, &token_lst);
     		free(rl);
-    		t_list *current = token_lst;
+    		t_token *current = token_lst;
     		if(current)
     		{
     			while (token_lst->token == SPC && token_lst->next)

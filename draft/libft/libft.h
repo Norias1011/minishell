@@ -39,7 +39,6 @@ t_list			*ft_lstnew(void *content);
 t_list			*ft_lstlast(t_list *lst);
 t_list			*ft_lstmap(t_list *l, void *(*f)(void *), void (*d)(void *));
 
-t_lis			*get_last(t_lis *stash);
 
 void			dealloc(t_lis **list, t_lis *clean, char *buf);
 void			*ft_calloc(size_t nitems, size_t size);

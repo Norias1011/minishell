@@ -13,6 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -21,10 +22,11 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <dirent.h>
+# include "../libft/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
-typedef enum e_tokens
+typedef enum token_lex
 {
 	NUMBER,
 	STRING,
@@ -48,19 +50,19 @@ typedef enum e_tokens
 	LEFT_ARROW,
 	RIGHT_ARROW,
 	QUOTE_STRING,
-}		t_tokens;
+}		t_token_lex;
 
-typedef struct s_list
+typedef struct s_token
 {
 	char			*content;
-	t_tokens	token;
-	struct s_list	*next;
-}		t_list;
+	t_token_lex	token;
+	struct s_token	*next;
+}		t_token;
 
 int	ft_isalpha(int c);
 unsigned int	ft_strlcpy(char *dest, char const *src, unsigned int size);
 int	ft_isdigit(int c);
 int	ft_strncmp(char const *str1, char const *str2, unsigned int n);
-t_list	*check_command(t_list *token_lst);
+t_token	*check_command(t_token *token_lst);
 
 #endif
