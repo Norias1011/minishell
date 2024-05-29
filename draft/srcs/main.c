@@ -46,22 +46,29 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 		i++;
 	}
 	i = 0;
-	while (current_cmd) //tant qu'il y a des cmd on les lance dans les pipes avec parents / enfant -parent / enfant -parent etc
+	while (current_cmd) //tant qu'il y a des cmd on les lance dans les pipes avec parents / enfant 
 	{
 		pid[i] = fork();
 		if (pid[i] < 0)
 			exit(-1);
 		else if (pid[i] == 0)
 		{
-			if (i > 0)
+			if (i == 0) // premier process
+			{ 
+				dup2(fd[i][1], STDOUT_FILENO);
+				close(fd[i][0]);
+			}
+			else if (i == nbr_cmd - 1) //dernier process ecris ce qu'il a recu du process d'avant donc le resultat
 			{
 				dup2(fd[i - 1][0], STDIN_FILENO);
-				close(fd[i - 1][0]);
+				close(fd[i - 1][1]);
 			}
-			if (i < nbr_cmd - 1)
+			else
 			{
-				dup2(fd[i][1], STDOUT_FILENO);
-				close(fd[i][1]);
+				dup2(fd[i - 1][0], STDIN_FILENO); //process precent lie au process suivant v
+				dup2(fd[i][1], STDOUT_FILENO); // process suivant
+				close(fd[i - 1][1]);
+				close(fd[i][0]); 
 			}
 			execute_command(current_cmd, env_s, env);
 			exit(0);
@@ -112,7 +119,7 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env) // execute les c
 	int	i;
 	
 	paths = split_paths(cmd_lst, env_s); //split tous les path possibles en tableau avec le nom de la commande a la fin
-	args = ft_split(cmd_lst->args, ' '); // split tous les arguments dans un tableau d'arguments
+	args = ft_split(ft_strjoin(cmd_lst->command, cmd_lst->args), ' '); // split tous les arguments dans un tableau d'arguments
 	i = 0;
 	if (!cmd_lst->command)
 	{
@@ -121,9 +128,7 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env) // execute les c
 		return ;
 	}
 	if (strncmp(cmd_lst->command, "exit", 4) == 0)
-	{
 		exit(1);
-	}
 	else if (strncmp(cmd_lst->command, "echo", 5) == 0)
 		echo(cmd_lst);
 	else
@@ -134,6 +139,9 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env) // execute les c
 				break;
 			i++;
 		}
+		free(paths);
+    		free(args);
+		perror("execve");
 		exit (-1);
 	}
 	i = 0;
