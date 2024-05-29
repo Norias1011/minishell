@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 17:11:46 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/23 17:12:54 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:08:44 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,22 +71,25 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 void	add_token(t_token **token_lst, t_token *new_token)
 {
-    t_token *last = get_last_token(*token_lst);
-    if (last == NULL)
-    {
-        *token_lst = new_token;
-    }
-    else
-    {
-        last->next = new_token;
-    }
+	t_token	*last;
+
+	last = get_last_token(*token_lst);
+	if (last == NULL)
+	{
+		*token_lst = new_token;
+	}
+	else
+	{
+		last->next = new_token;
+	}
 }
 
 int	get_arg_size(t_token **liste)
 {
-	int size;
-	t_token *current = *liste;
-	
+	int		size;
+	t_token	*current;
+
+	current = *liste;
 	size = 0;
 	while (current && current->token != PIPE)
 	{
@@ -98,7 +101,10 @@ int	get_arg_size(t_token **liste)
 
 void	add_command(t_cmds **cmd_list, char *command, char *args)
 {
-	t_cmds *new_cmd = malloc(sizeof(t_cmds));
+	t_cmds	*new_cmd;
+	t_cmds	*last;
+
+	new_cmd = malloc(sizeof(t_cmds));
 	if (new_cmd == NULL)
 		return ;
 	new_cmd->command = NULL;
@@ -109,22 +115,27 @@ void	add_command(t_cmds **cmd_list, char *command, char *args)
 	if (command != NULL)
 		new_cmd->command = strdup(command);
 	if (*cmd_list == NULL)
-        	*cmd_list = new_cmd;
-        else
-        {
-       		t_cmds *last = get_last_cmd(*cmd_list);
-       		last->next = new_cmd;
-       	}
+		*cmd_list = new_cmd;
+	else
+	{
+		last = get_last_cmd(*cmd_list);
+		last->next = new_cmd;
+	}
 }
 
 t_cmds	*token_to_commands(t_token *token_list)
 {
-	t_cmds *cmd_list = NULL;
-	t_token *current = token_list;
-	char *cmd = NULL;
-	char *args = NULL;
-	int arg_size = 0;
-	
+	t_cmds	*cmd_list;
+	t_token	*current;
+	char	*cmd;
+	char	*args;
+	int		arg_size;
+
+	cmd_list = NULL;
+	current = token_list;
+	cmd = NULL;
+	args = NULL;
+	arg_size = 0;
 	while (current)
 	{
 		while (current && current->token != STRING)
@@ -135,20 +146,20 @@ t_cmds	*token_to_commands(t_token *token_list)
 		current = current->next;
 		if (current)
 		{
-		arg_size = get_arg_size(&current);
-		args = malloc(sizeof(char) * (arg_size + 1));
-               	if (args == NULL)
-               		return (NULL);
-               	args[0] = '\0';
-                while (current && current->token != PIPE)
-		{
-			args = ft_strjoin(args, current->content);
-			current = current->next;
-		}
-		add_command(&cmd_list, cmd, args);
-		free(args);
-		cmd = NULL;
-		arg_size = 0;
+			arg_size = get_arg_size(&current);
+			args = malloc(sizeof(char) * (arg_size + 1));
+			if (args == NULL)
+				return (NULL);
+			args[0] = '\0';
+			while (current && current->token != PIPE)
+			{
+				args = ft_strjoin(args, current->content);
+				current = current->next;
+			}
+			add_command(&cmd_list, cmd, args);
+			free(args);
+			cmd = NULL;
+			arg_size = 0;
 		}
 		if (current)
 			current = current->next;
@@ -156,10 +167,10 @@ t_cmds	*token_to_commands(t_token *token_list)
 	return (cmd_list);
 }
 
-t_token_lex	get_symbol(char *symbol)	//check les diffrents symboles
+t_token_lex	get_symbol(char *symbol) // check les diffrents symboles
 {
 	t_token_lex res;
-	
+
 	res = SYMBOL;
 	if (symbol[0] == '-')
 		res = DASH;
@@ -196,7 +207,7 @@ int	is_metachar(char c)
 int	token_string(char *rl, t_token *new, int i)
 {
 	int	j;
-	
+
 	j = 0;
 	while ((rl[i + j]) && (is_metachar(rl[i + j]) == 0))
 		j++;
@@ -214,7 +225,7 @@ int	token_string(char *rl, t_token *new, int i)
 int	token_space(char *rl, t_token *new, int i)
 {
 	int	j;
-	
+
 	j = 0;
 	while (rl[i + j] == ' ')
 		j++;
@@ -230,9 +241,9 @@ int	token_space(char *rl, t_token *new, int i)
 }
 
 int	token_symbol(char *rl, t_token *new, int i)
-{	
+{
 	int	j;
-	
+
 	j = 1;
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
@@ -249,7 +260,7 @@ int	quote_handler(char *rl, t_token *new, int i)
 {
 	int	j;
 	int	is_dollar;
-	
+
 	j = 0;
 	is_dollar = 0;
 	while (rl[i + j] && rl[i + j] != rl[i - 1])
@@ -280,6 +291,7 @@ int	quote_handler(char *rl, t_token *new, int i)
 	}
 	return (j);
 }
+
 int	check_arrow(char *rl, t_token *new, int i)
 {
 	if (new->token == L_ARROW && rl[i] == '<')
@@ -311,10 +323,10 @@ int	check_arrow(char *rl, t_token *new, int i)
 
 void	token(char *rl, t_token **token_lst)
 {
-	int	i;
-	int	add;
-	t_token *new;
-	
+	int		i;
+	int		add;
+	t_token	*new;
+
 	i = 0;
 	add = 0;
 	while (rl[i])
@@ -322,7 +334,8 @@ void	token(char *rl, t_token **token_lst)
 		new = malloc(sizeof(t_token));
 		if (!new)
 			return ;
-		if ((ft_isalpha(rl[i]) || ft_isdigit(rl[i])) || (is_metachar(rl[i]) == 0))
+		if ((ft_isalpha(rl[i]) || ft_isdigit(rl[i]))
+			|| (is_metachar(rl[i]) == 0))
 			add = token_string(rl, new, i);
 		else if (rl[i] == ' ')
 			add = token_space(rl, new, i);
@@ -351,43 +364,44 @@ void	token(char *rl, t_token **token_lst)
 	}
 }
 
-char*	get_token_name(t_token_lex token) //pour print les tokens
+char	*get_token_name(t_token_lex token) // pour print les tokens
 {
 	if (token == STRING)
-		return "STRING";
+		return ("STRING");
 	if (token == SYMBOL)
-		return "SYMBOL";
+		return ("SYMBOL");
 	if (token == SPC)
-		return "SPC";
+		return ("SPC");
 	if (token == PIPE)
-		return "PIPE";
+		return ("PIPE");
 	if (token == DOLLAR)
-		return "DOLLAR";
+		return ("DOLLAR");
 	if (token == DASH)
-		return "DASH";
+		return ("DASH");
 	if (token == QUOTE)
-		return "QUOTE";
+		return ("QUOTE");
 	if (token == DOUBLEQUOTE)
-		return "DOUBLEQUOTE";
+		return ("DOUBLEQUOTE");
 	if (token == L_ARROW)
-		return "L_ARROW";
+		return ("L_ARROW");
 	if (token == R_ARROW)
-		return "R_ARROW";
+		return ("R_ARROW");
 	if (token == QUOTE_STRING)
-		return "QUOTE_STRING";
+		return ("QUOTE_STRING");
 	if (token == L_D_ARROW)
-		return "L_D_ARROW";
+		return ("L_D_ARROW");
 	if (token == R_D_ARROW)
-		return "R_D_ARROW";
-	return "UNKNOW";
+		return ("R_D_ARROW");
+	return ("UNKNOW");
 }
-
 
 void	free_token_lst(t_token *token_lst)
 {
+	t_token	*temp;
+
 	while (token_lst)
 	{
-		t_token *temp = token_lst;
+		temp = token_lst;
 		token_lst = token_lst->next;
 		free(temp->content);
 		free(temp);
@@ -397,9 +411,10 @@ void	free_token_lst(t_token *token_lst)
 /*int	check_newline(t_token *token_lst) // vrai (1) si -n
 {
 	int	i;
-	
+
 	i = 0;
-	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next) && (strncmp((token_lst->next)->content, "n", 1) == 0))
+	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next)
+		&& (strncmp((token_lst->next)->content, "n", 1) == 0))
 	{
 		while (i < ft_strlen(token_lst->next->content)) // gere echo -nnnn test
 		{
@@ -409,7 +424,8 @@ void	free_token_lst(t_token *token_lst)
 		}
 		if (!token_lst->next->next)
 			return (1);
-		if ((token_lst->next->next->token == SPC || token_lst->next->next->token == PIPE))
+		if ((token_lst->next->next->token == SPC
+				|| token_lst->next->next->token == PIPE))
 			return (1);
 	}
 	return (0);
@@ -417,31 +433,34 @@ void	free_token_lst(t_token *token_lst)
 
 int	count_commands(t_cmds **cmd_lst)
 {
-	int i;
-	t_cmds *current = *cmd_lst;
-	
+	int		i;
+	t_cmds	*current;
+
+	current = *cmd_lst;
 	i = 0;
 	while (current)
 	{
 		i++;
 		current = current->next;
-        }
-        return (i); 
+	}
+	return (i);
 }
 
 void	pipe_pipe(t_cmds **cmd_lst)
 {
-	int nbr_cmd;
-	int	i;
-	
+	int		nbr_cmd;
+	int		i;
+	pid_t	*pid;
+	t_cmds	*current_cmd;
+
 	nbr_cmd = count_commands(cmd_lst);
-	pid_t *pid = malloc(nbr_cmd * sizeof(pid_t));
-	int (*fd)[2] = malloc((nbr_cmd) * sizeof(*fd));
-	t_cmds *current_cmd = *cmd_lst;
+	pid = malloc(nbr_cmd * sizeof(pid_t));
+	int(*fd)[2] = malloc((nbr_cmd) * sizeof(*fd));
+	current_cmd = *cmd_lst;
 	i = 0;
 	while (i < nbr_cmd - 1)
 	{
-		if (pipe(fd[i]) == -1) 
+		if (pipe(fd[i]) == -1)
 			exit(-1);
 		i++;
 	}
@@ -450,7 +469,7 @@ void	pipe_pipe(t_cmds **cmd_lst)
 	{
 		pid[i] = fork();
 		if (pid[i] < 0)
-			exit (-1);
+			exit(-1);
 		else if (pid[i] == 0)
 		{
 			if (i > 0)
@@ -466,8 +485,8 @@ void	pipe_pipe(t_cmds **cmd_lst)
 			execute_command(current_cmd);
 			exit(0);
 		}
-	i++;
-	current_cmd = current_cmd->next;
+		i++;
+		current_cmd = current_cmd->next;
 	}
 	i = 0;
 	while (i < nbr_cmd - 1)
@@ -488,7 +507,7 @@ void	echo(t_cmds *cmd_lst)
 {
 	int	new_line;
 	int	i;
-	
+
 	i = 0;
 	new_line = 0;
 	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
@@ -501,58 +520,60 @@ void	echo(t_cmds *cmd_lst)
 	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
 		i++;
 	printf("%s", cmd_lst->args + i);
-    	if (new_line == 0) // newline en fonction du booleen
-    		printf("\n");
-}	
+	if (new_line == 0) // newline en fonction du booleen
+		printf("\n");
+}
 
 void	execute_command(t_cmds *cmd_lst)
 {
-  	if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command, "exit", 4) == 0))
+	if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command,
+				"exit", 4) == 0))
 	{
-    		exit(1) ;
-    	}
-    	else if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command, "echo", 5) == 0))
-    		echo(cmd_lst);
+		exit(1);
+	}
+	else if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command,
+				"echo", 5) == 0))
+		echo(cmd_lst);
 }
-        	
+
 int	main(int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;
-	int	i;
-	char	*rl;
-	//DIR *mydir;
-	//struct dirent *d;
+	int i;
+	char *rl;
+	// DIR *mydir;
+	// struct dirent *d;
 	t_cmds *cmds = NULL;
 	t_token *token_lst = NULL;
-	/*mydir = opendir(dir_path); 
+	/*mydir = opendir(dir_path);
 	if (mydir == NULL) // fonction ls check path valide
 	{
 		perror("opendir");
-		return 1;
+		return (1);
 	}*/
 	while (1)
 	{
-	//mydir = opendir(dir_path);
+		// mydir = opendir(dir_path);
 		i = 1;
 		rl = NULL;
-		while (i < argc) //on utilisera stdinput et gnl pour mettre dans rl
+		while (i < argc) // on utilisera stdinput et gnl pour mettre dans rl
 		{
 			rl = ft_strjoin(rl, argv[i]);
 			i++;
 		}
-    		rl = readline("minishell > ");
-    		token(rl, &token_lst);
-    		cmds = token_to_commands(token_lst);
-    		free(rl);
-    		free_token_lst(token_lst);
-    		token_lst = NULL;
-    		if(cmds)
-    		{
-    			pipe_pipe(&cmds);
-    			//exec_pipes(current);
-        	}
-    	//closedir(mydir);
-    	}
-    	return (0);
+		rl = readline("minishell > ");
+		token(rl, &token_lst);
+		cmds = token_to_commands(token_lst);
+		free(rl);
+		free_token_lst(token_lst);
+		token_lst = NULL;
+		if (cmds)
+		{
+			pipe_pipe(&cmds);
+			// exec_pipes(current);
+		}
+		// closedir(mydir);
+	}
+	return (0);
 } // https://github.com/iciamyplant/Minishell/blob/master/tester/test.sh

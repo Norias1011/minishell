@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/28 17:19:27 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/29 16:23:27 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,11 @@
 # include <errno.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <strings.h>
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
@@ -66,13 +68,25 @@ typedef struct s_minishell
 	char			*prompt;
 }					t_minishell;
 
+/* main.c functions */
+
+void				minishell_loop(t_minishell *minishell);
+
 /* utils.c functions */
 
 void				print_prompt(void);
+void				clean_exit(t_minishell *minishell, int exno);
+void				free_all(t_minishell *minishell);
 
 /* init_all.c functions */
 
 int					init_mini_shell(t_minishell *minishell, char **env);
 int					init_env(t_minishell *minishell, char **env);
+
+/* signal.c functions */
+
+void				signal_handler(void);
+void				nothing_signal(void);
+void				new_prompt(int signo);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:03:28 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/28 13:59:02 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/29 16:22:37 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,27 @@ void	print_prompt(void)
 	printf("▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░        \n");
 	printf("░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓");
 	printf("▒░░▒▓█▓▒░▒▓████████▓▒░▒▓████████▓▒░▒▓████████▓▒░ %s\n", DEFAULT);
+}
+/* function that we will call when we will need to clean the exit of the program*/
+void	clean_exit(t_minishell *minishell, int exno)
+{
+	if (minishell)
+	{
+		free_all(minishell);
+	}
+	exit(exno);
+}
+/* in this function we can add all the malloc that we have to free*/
+void	free_all(t_minishell *minishell)
+{
+	if (minishell->env_s)
+	{
+		while (minishell->env_s)
+		{
+			free(minishell->env_s->key);
+			free(minishell->env_s->value);
+			free(minishell->env_s);
+			minishell->env_s = minishell->env_s->next;
+		}
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/28 17:09:15 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/29 16:35:41 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ int	init_env(t_minishell *minishell, char **env)
 				tmp = tmp->next;
 			tmp->next = new_env;
 		}
+		printf("key: %s\n", new_env->key);
+		printf("value: %s\n", new_env->value);
 		i++;
 	}
 	return (1);
