@@ -45,9 +45,8 @@ SRC = 	ft_atoi.c \
 	ft_itoa.c \
 	ft_print_pointeur.c \
 	ft_putnbr_base.c \
-	get_next_line.c \
-	get_next_line_utils.c 
-
+	ft_strndup.c
+	
 SBONUS = ft_lstadd_back_bonus.c \
 	 ft_lstadd_front_bonus.c \
 	 ft_lstclear_bonus.c \

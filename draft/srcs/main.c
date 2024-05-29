@@ -12,426 +12,7 @@
 
 #include "../include/minishell.h"
 
-int	ft_strlen(const char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-t_token	*get_last_token(t_token *stash)
-{
-	if (stash == NULL)
-		return (NULL);
-	while (stash->next)
-		stash = stash->next;
-	return (stash);
-}
-
-t_cmds	*get_last_cmd(t_cmds *stash)
-{
-	if (stash == NULL)
-		return (NULL);
-	while (stash->next)
-		stash = stash->next;
-	return (stash);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*res;
-	int		j;
-
-	if (s1 == NULL)
-		return ((char *)s2);
-	if (s2 == NULL)
-		return ((char *)s1);
-	j = ft_strlen(s1) + ft_strlen(s2);
-	res = (char *)malloc(sizeof(char) * (j + 1));
-	if (res == NULL)
-		return (NULL);
-	j = 0;
-	while (s1[j])
-	{
-		res[j] = s1[j];
-		j++;
-	}
-	j = 0;
-	while (s2[j])
-	{
-		res[ft_strlen(s1) + j] = s2[j];
-		j++;
-	}
-	res[ft_strlen(s1) + ft_strlen(s2)] = '\0';
-	return (res);
-}
-
-void	add_token(t_token **token_lst, t_token *new_token)
-{
-	t_token	*last;
-
-	last = get_last_token(*token_lst);
-	if (last == NULL)
-	{
-		*token_lst = new_token;
-	}
-	else
-	{
-		last->next = new_token;
-	}
-}
-
-int	get_arg_size(t_token **liste)
-{
-	int		size;
-	t_token	*current;
-
-	current = *liste;
-	size = 0;
-	while (current && current->token != PIPE)
-	{
-		size += ft_strlen(current->content);
-		current = current->next;
-	}
-	return (size);
-}
-
-void	add_command(t_cmds **cmd_list, char *command, char *args)
-{
-	t_cmds	*new_cmd;
-	t_cmds	*last;
-
-	new_cmd = malloc(sizeof(t_cmds));
-	if (new_cmd == NULL)
-		return ;
-	new_cmd->command = NULL;
-	new_cmd->args = NULL;
-	new_cmd->next = NULL;
-	if (args != NULL)
-		new_cmd->args = strdup(args);
-	if (command != NULL)
-		new_cmd->command = strdup(command);
-	if (*cmd_list == NULL)
-		*cmd_list = new_cmd;
-	else
-	{
-		last = get_last_cmd(*cmd_list);
-		last->next = new_cmd;
-	}
-}
-
-t_cmds	*token_to_commands(t_token *token_list)
-{
-	t_cmds	*cmd_list;
-	t_token	*current;
-	char	*cmd;
-	char	*args;
-	int		arg_size;
-
-	cmd_list = NULL;
-	current = token_list;
-	cmd = NULL;
-	args = NULL;
-	arg_size = 0;
-	while (current)
-	{
-		while (current && current->token != STRING)
-			current = current->next;
-		if (current == NULL)
-			break ;
-		cmd = strdup(current->content);
-		current = current->next;
-		if (current)
-		{
-			arg_size = get_arg_size(&current);
-			args = malloc(sizeof(char) * (arg_size + 1));
-			if (args == NULL)
-				return (NULL);
-			args[0] = '\0';
-			while (current && current->token != PIPE)
-			{
-				args = ft_strjoin(args, current->content);
-				current = current->next;
-			}
-			add_command(&cmd_list, cmd, args);
-			free(args);
-			cmd = NULL;
-			arg_size = 0;
-		}
-		if (current)
-			current = current->next;
-	}
-	return (cmd_list);
-}
-
-t_token_lex	get_symbol(char *symbol) // check les diffrents symboles
-{
-	t_token_lex res;
-
-	res = SYMBOL;
-	if (symbol[0] == '-')
-		res = DASH;
-	if (symbol[0] == '\'')
-		res = QUOTE;
-	if (symbol[0] == '"')
-		res = DOUBLEQUOTE;
-	if (symbol[0] == '|')
-		res = PIPE;
-	if (symbol[0] == '<')
-		res = L_ARROW;
-	if (symbol[0] == '>')
-		res = R_ARROW;
-	return (res);
-}
-
-int	is_metachar(char c)
-{
-	if (c == '\'')
-		return (1);
-	if (c == '"')
-		return (1);
-	if (c == '<')
-		return (1);
-	if (c == '>')
-		return (1);
-	if (c == '|')
-		return (1);
-	if (c == ' ')
-		return (1);
-	return (0);
-}
-
-int	token_string(char *rl, t_token *new, int i)
-{
-	int	j;
-
-	j = 0;
-	while ((rl[i + j]) && (is_metachar(rl[i + j]) == 0))
-		j++;
-	new->content = malloc(sizeof(char) * (j + 1));
-	if (!new->content)
-	{
-		free(new);
-		return (0);
-	}
-	ft_strlcpy(new->content, rl + i, j + 1);
-	new->token = STRING;
-	return (j);
-}
-
-int	token_space(char *rl, t_token *new, int i)
-{
-	int	j;
-
-	j = 0;
-	while (rl[i + j] == ' ')
-		j++;
-	new->content = malloc(sizeof(char) * (j + 1));
-	if (!new->content)
-	{
-		free(new);
-		return (0);
-	}
-	ft_strlcpy(new->content, rl + i, j + 1);
-	new->token = SPC;
-	return (j);
-}
-
-int	token_symbol(char *rl, t_token *new, int i)
-{
-	int	j;
-
-	j = 1;
-	new->content = malloc(sizeof(char) * (j + 1));
-	if (!new->content)
-	{
-		free(new);
-		return (0);
-	}
-	ft_strlcpy(new->content, rl + i, j + 1);
-	new->token = get_symbol(new->content);
-	return (j);
-}
-
-int	quote_handler(char *rl, t_token *new, int i)
-{
-	int	j;
-	int	is_dollar;
-
-	j = 0;
-	is_dollar = 0;
-	while (rl[i + j] && rl[i + j] != rl[i - 1])
-	{
-		if (rl[i + j] == '$' && rl[i - 1] == '"')
-			is_dollar = 1;
-		j++;
-	}
-	if (i + j == ft_strlen(rl) && rl[i + j] != rl[i - 1]) //&& j != 0)
-		return (-1);
-	new->content = malloc(sizeof(char) * (j + 1));
-	if (!new->content)
-	{
-		free(new);
-		return (0);
-	}
-	if (j == 0 && rl[i] != ft_strlen(rl))
-	{
-		ft_strlcpy(new->content, " ", j + 1);
-		new->token = SPC;
-	}
-	else
-	{
-		ft_strlcpy(new->content, rl + i, j + 1);
-		new->token = QUOTE_STRING;
-		if (is_dollar == 1)
-			new->token = STRING;
-	}
-	return (j);
-}
-
-int	check_arrow(char *rl, t_token *new, int i)
-{
-	if (new->token == L_ARROW && rl[i] == '<')
-	{
-		new->content = malloc(sizeof(char) * (3));
-		if (!new->content)
-		{
-			free(new);
-			return (0);
-		}
-		ft_strlcpy(new->content, rl + i - 1, 3);
-		new->token = L_D_ARROW;
-		return (1);
-	}
-	if (new->token == R_ARROW && rl[i] == '>')
-	{
-		new->content = malloc(sizeof(char) * (3));
-		if (!new->content)
-		{
-			free(new);
-			return (0);
-		}
-		ft_strlcpy(new->content, rl + i - 1, 3);
-		new->token = R_D_ARROW;
-		return (1);
-	}
-	return (0);
-}
-
-void	token(char *rl, t_token **token_lst)
-{
-	int		i;
-	int		add;
-	t_token	*new;
-
-	i = 0;
-	add = 0;
-	while (rl[i])
-	{
-		new = malloc(sizeof(t_token));
-		if (!new)
-			return ;
-		if ((ft_isalpha(rl[i]) || ft_isdigit(rl[i]))
-			|| (is_metachar(rl[i]) == 0))
-			add = token_string(rl, new, i);
-		else if (rl[i] == ' ')
-			add = token_space(rl, new, i);
-		else
-			add = token_symbol(rl, new, i);
-		new->next = NULL;
-		i += add;
-		if ((new->token == QUOTE || new->token == DOUBLEQUOTE))
-		{
-			add = quote_handler(rl, new, i);
-			if (add != -1)
-			{
-				i += add + 1;
-				add_token(token_lst, new);
-			}
-			else
-				add_token(token_lst, new);
-			continue ;
-		}
-		if (new->token == L_ARROW || new->token == R_ARROW)
-		{
-			add = check_arrow(rl, new, i);
-			i += add;
-		}
-		add_token(token_lst, new);
-	}
-}
-
-char	*get_token_name(t_token_lex token) // pour print les tokens
-{
-	if (token == STRING)
-		return ("STRING");
-	if (token == SYMBOL)
-		return ("SYMBOL");
-	if (token == SPC)
-		return ("SPC");
-	if (token == PIPE)
-		return ("PIPE");
-	if (token == DOLLAR)
-		return ("DOLLAR");
-	if (token == DASH)
-		return ("DASH");
-	if (token == QUOTE)
-		return ("QUOTE");
-	if (token == DOUBLEQUOTE)
-		return ("DOUBLEQUOTE");
-	if (token == L_ARROW)
-		return ("L_ARROW");
-	if (token == R_ARROW)
-		return ("R_ARROW");
-	if (token == QUOTE_STRING)
-		return ("QUOTE_STRING");
-	if (token == L_D_ARROW)
-		return ("L_D_ARROW");
-	if (token == R_D_ARROW)
-		return ("R_D_ARROW");
-	return ("UNKNOW");
-}
-
-void	free_token_lst(t_token *token_lst)
-{
-	t_token	*temp;
-
-	while (token_lst)
-	{
-		temp = token_lst;
-		token_lst = token_lst->next;
-		free(temp->content);
-		free(temp);
-	}
-}
-
-/*int	check_newline(t_token *token_lst) // vrai (1) si -n
-{
-	int	i;
-
-	i = 0;
-	if ((token_lst) && (token_lst->token == DASH) && (token_lst->next)
-		&& (strncmp((token_lst->next)->content, "n", 1) == 0))
-	{
-		while (i < ft_strlen(token_lst->next->content)) // gere echo -nnnn test
-		{
-			if (token_lst->next->content[i] != 'n')
-				return (0);
-			i++;
-		}
-		if (!token_lst->next->next)
-			return (1);
-		if ((token_lst->next->next->token == SPC
-				|| token_lst->next->next->token == PIPE))
-			return (1);
-	}
-	return (0);
-}*/
-
-int	count_commands(t_cmds **cmd_lst)
+int	count_commands(t_cmds **cmd_lst) // compte le nombre de cmd dans la liste
 {
 	int		i;
 	t_cmds	*current;
@@ -446,7 +27,7 @@ int	count_commands(t_cmds **cmd_lst)
 	return (i);
 }
 
-void	pipe_pipe(t_cmds **cmd_lst)
+void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 {
 	int		nbr_cmd;
 	int		i;
@@ -458,14 +39,14 @@ void	pipe_pipe(t_cmds **cmd_lst)
 	int(*fd)[2] = malloc((nbr_cmd) * sizeof(*fd));
 	current_cmd = *cmd_lst;
 	i = 0;
-	while (i < nbr_cmd - 1)
+	while (i < nbr_cmd - 1) // init des pipes
 	{
 		if (pipe(fd[i]) == -1)
 			exit(-1);
 		i++;
 	}
 	i = 0;
-	while (current_cmd)
+	while (current_cmd) //tant qu'il y a des cmd on les lance dans les pipes avec parents / enfant -parent / enfant -parent etc
 	{
 		pid[i] = fork();
 		if (pid[i] < 0)
@@ -482,7 +63,7 @@ void	pipe_pipe(t_cmds **cmd_lst)
 				dup2(fd[i][1], STDOUT_FILENO);
 				close(fd[i][1]);
 			}
-			execute_command(current_cmd);
+			execute_command(current_cmd, env_s, env);
 			exit(0);
 		}
 		i++;
@@ -503,7 +84,7 @@ void	pipe_pipe(t_cmds **cmd_lst)
 	}
 }
 
-void	echo(t_cmds *cmd_lst)
+void	echo(t_cmds *cmd_lst) // cmd echo
 {
 	int	new_line;
 	int	i;
@@ -524,56 +105,84 @@ void	echo(t_cmds *cmd_lst)
 		printf("\n");
 }
 
-void	execute_command(t_cmds *cmd_lst)
+void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env) // execute les commandes en checkant si elle est dans les builtins avant
 {
-	if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command,
-				"exit", 4) == 0))
+	char **args;
+	char **paths;
+	int	i;
+	
+	paths = split_paths(cmd_lst, env_s); //split tous les path possibles en tableau avec le nom de la commande a la fin
+	args = ft_split(cmd_lst->args, ' '); // split tous les arguments dans un tableau d'arguments
+	i = 0;
+	if (!cmd_lst->command)
+	{
+		free(paths);
+		free(args);
+		return ;
+	}
+	if (strncmp(cmd_lst->command, "exit", 4) == 0)
 	{
 		exit(1);
 	}
-	else if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command,
-				"echo", 5) == 0))
+	else if (strncmp(cmd_lst->command, "echo", 5) == 0)
 		echo(cmd_lst);
-}
-
-int	main(int argc, char **argv)
-{
-	(void)argc;
-	(void)argv;
-	int i;
-	char *rl;
-	// DIR *mydir;
-	// struct dirent *d;
-	t_cmds *cmds = NULL;
-	t_token *token_lst = NULL;
-	/*mydir = opendir(dir_path);
-	if (mydir == NULL) // fonction ls check path valide
+	else
 	{
-		perror("opendir");
-		return (1);
-	}*/
-	while (1)
-	{
-		// mydir = opendir(dir_path);
-		i = 1;
-		rl = NULL;
-		while (i < argc) // on utilisera stdinput et gnl pour mettre dans rl
+		while (paths[i])
 		{
-			rl = ft_strjoin(rl, argv[i]);
+			if (execve(paths[i], args, env) != -1) // execute 
+				break;
 			i++;
 		}
-		rl = readline("minishell > ");
-		token(rl, &token_lst);
-		cmds = token_to_commands(token_lst);
-		free(rl);
-		free_token_lst(token_lst);
-		token_lst = NULL;
-		if (cmds)
-		{
-			pipe_pipe(&cmds);
-			// exec_pipes(current);
-		}
-		// closedir(mydir);
+		exit (-1);
 	}
+	i = 0;
+	while (paths && paths[i]) //free tout
+	{
+        	free(paths[i]);
+        	i++;
+    	}
+    	free(paths);
+    	free(args);
+}
+
+void	minishell_loop(t_minishell *minishell)
+{
+	//char	**cmd;
+
+	print_prompt();
+	while (1)
+	{
+		signal_handler();
+		minishell->prompt = NULL;
+		minishell->prompt = readline("minishell$ > ");
+		if (!minishell->prompt)
+			clean_exit(minishell, EXIT_SUCCESS);
+		/*cmd = ft_split(minishell->prompt, ' ');
+		if (!cmd)
+		{
+			free(minishell->prompt);
+			clean_exit(minishell, EXIT_FAILURE);
+		}*/
+		token(minishell->prompt, &minishell->token);
+		minishell->cmds = token_to_commands(minishell->token);
+		free(minishell->prompt);
+		minishell->token = NULL;
+		pipe_pipe(&minishell->cmds, minishell->env_s, minishell->env);
+		/*parse_cmd(cmd);
+		free(line);
+		free(cmd);*/
+	}
+}
+
+int	main(int argc, char *argv[], char **env)
+{
+	t_minishell	minishell;
+
+	(void)argc, (void)argv;
+	minishell.env = env;
+	if (init_mini_shell(&minishell, env) == -1)
+		clean_exit(&minishell, EXIT_FAILURE);
+	minishell_loop(&minishell);
 	return (0);
-} // https://github.com/iciamyplant/Minishell/blob/master/tester/test.sh
+}
