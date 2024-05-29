@@ -58,7 +58,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 				dup2(fd[i][1], STDOUT_FILENO);
 				close(fd[i][0]);
 			}
-			else if (i == nbr_cmd - 1) //dernier process ecris ce qu'il a recu du process d'avant donc le resultat
+			else if (i == nbr_cmd - 1 && i > 0) //dernier process ecris ce qu'il a recu du process d'avant donc le resultat
 			{
 				dup2(fd[i - 1][0], STDIN_FILENO);
 				close(fd[i - 1][1]);
@@ -107,9 +107,12 @@ void	echo(t_cmds *cmd_lst) // cmd echo
 	}
 	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
 		i++;
-	while (cmd_lst->args[i] && cmd_lst->args[i] != ' ')
+	while (cmd_lst->args[i])
 	{
-		printf("%c", cmd_lst->args[i]);
+		while (cmd_lst->args[i] == ' ' && (cmd_lst->args[i + 1] == ' ' || cmd_lst->args[i + 1] == '\0'))
+			i++;
+		if (cmd_lst->args[i] != '\0')
+			printf("%c", cmd_lst->args[i]);
 		i++;
 	}
 	if (new_line == 0) // newline en fonction du booleen
