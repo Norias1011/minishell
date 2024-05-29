@@ -51,6 +51,14 @@ typedef struct s_token
 	struct s_token	*next;
 }		t_token;
 
+typedef struct s_cmds
+{
+	char			*command;
+	char			*args;
+	struct s_cmds	*next;
+}		t_cmds;
+
+void	execute_command(t_cmds *cmd_lst);
 int	ft_isalpha(int c);
 unsigned int	ft_strlcpy(char *dest, char const *src, unsigned int size);
 int	ft_isdigit(int c);

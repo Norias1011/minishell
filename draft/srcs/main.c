@@ -22,7 +22,16 @@ int	ft_strlen(const char *str)
 	return (i);
 }
 
-t_token	*get_last(t_token *stash)
+t_token	*get_last_token(t_token *stash)
+{
+	if (stash == NULL)
+		return (NULL);
+	while (stash->next)
+		stash = stash->next;
+	return (stash);
+}
+
+t_cmds	*get_last_cmd(t_cmds *stash)
 {
 	if (stash == NULL)
 		return (NULL);
@@ -62,7 +71,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 void	add_token(t_token **token_lst, t_token *new_token)
 {
-    t_token *last = get_last(*token_lst);
+    t_token *last = get_last_token(*token_lst);
     if (last == NULL)
     {
         *token_lst = new_token;
@@ -71,6 +80,80 @@ void	add_token(t_token **token_lst, t_token *new_token)
     {
         last->next = new_token;
     }
+}
+
+int	get_arg_size(t_token **liste)
+{
+	int size;
+	t_token *current = *liste;
+	
+	size = 0;
+	while (current && current->token != PIPE)
+	{
+		size += ft_strlen(current->content);
+		current = current->next;
+	}
+	return (size);
+}
+
+void	add_command(t_cmds **cmd_list, char *command, char *args)
+{
+	t_cmds *new_cmd = malloc(sizeof(t_cmds));
+	if (new_cmd == NULL)
+		return ;
+	new_cmd->command = NULL;
+	new_cmd->args = NULL;
+	new_cmd->next = NULL;
+	if (args != NULL)
+		new_cmd->args = strdup(args);
+	if (command != NULL)
+		new_cmd->command = strdup(command);
+	if (*cmd_list == NULL)
+        	*cmd_list = new_cmd;
+        else
+        {
+       		t_cmds *last = get_last_cmd(*cmd_list);
+       		last->next = new_cmd;
+       	}
+}
+
+t_cmds	*token_to_commands(t_token *token_list)
+{
+	t_cmds *cmd_list = NULL;
+	t_token *current = token_list;
+	char *cmd = NULL;
+	char *args = NULL;
+	int arg_size = 0;
+	
+	while (current)
+	{
+		while (current && current->token != STRING)
+			current = current->next;
+		if (current == NULL)
+			break ;
+		cmd = strdup(current->content);
+		current = current->next;
+		if (current)
+		{
+		arg_size = get_arg_size(&current);
+		args = malloc(sizeof(char) * (arg_size + 1));
+               	if (args == NULL)
+               		return (NULL);
+               	args[0] = '\0';
+                while (current && current->token != PIPE)
+		{
+			args = ft_strjoin(args, current->content);
+			current = current->next;
+		}
+		add_command(&cmd_list, cmd, args);
+		free(args);
+		cmd = NULL;
+		arg_size = 0;
+		}
+		if (current)
+			current = current->next;
+	}
+	return (cmd_list);
 }
 
 t_token_lex	get_symbol(char *symbol)	//check les diffrents symboles
@@ -239,7 +322,7 @@ void	token(char *rl, t_token **token_lst)
 		new = malloc(sizeof(t_token));
 		if (!new)
 			return ;
-		if ((ft_isalpha(rl[i]) || ft_isdigit(rl[i])) && (is_metachar(rl[i]) == 0))
+		if ((ft_isalpha(rl[i]) || ft_isdigit(rl[i])) || (is_metachar(rl[i]) == 0))
 			add = token_string(rl, new, i);
 		else if (rl[i] == ' ')
 			add = token_space(rl, new, i);
@@ -286,8 +369,6 @@ char*	get_token_name(t_token_lex token) //pour print les tokens
 		return "QUOTE";
 	if (token == DOUBLEQUOTE)
 		return "DOUBLEQUOTE";
-	if (token == UNDERSCORE)
-		return "UNDERSCORE";
 	if (token == L_ARROW)
 		return "L_ARROW";
 	if (token == R_ARROW)
@@ -313,7 +394,7 @@ void	free_token_lst(t_token *token_lst)
 	}
 }
 
-int	check_newline(t_token *token_lst) // vrai (1) si -n
+/*int	check_newline(t_token *token_lst) // vrai (1) si -n
 {
 	int	i;
 	
@@ -332,71 +413,106 @@ int	check_newline(t_token *token_lst) // vrai (1) si -n
 			return (1);
 	}
 	return (0);
+}*/
+
+int	count_commands(t_cmds **cmd_lst)
+{
+	int i;
+	t_cmds *current = *cmd_lst;
+	
+	i = 0;
+	while (current)
+	{
+		i++;
+		current = current->next;
+        }
+        return (i); 
 }
 
-t_token	*echo(t_token *current)
+void	pipe_pipe(t_cmds **cmd_lst)
+{
+	int nbr_cmd;
+	int	i;
+	
+	nbr_cmd = count_commands(cmd_lst);
+	pid_t *pid = malloc(nbr_cmd * sizeof(pid_t));
+	int (*fd)[2] = malloc((nbr_cmd) * sizeof(*fd));
+	t_cmds *current_cmd = *cmd_lst;
+	i = 0;
+	while (i < nbr_cmd - 1)
+	{
+		if (pipe(fd[i]) == -1) 
+			exit(-1);
+		i++;
+	}
+	i = 0;
+	while (current_cmd)
+	{
+		pid[i] = fork();
+		if (pid[i] < 0)
+			exit (-1);
+		else if (pid[i] == 0)
+		{
+			if (i > 0)
+			{
+				dup2(fd[i - 1][0], STDIN_FILENO);
+				close(fd[i - 1][0]);
+			}
+			if (i < nbr_cmd - 1)
+			{
+				dup2(fd[i][1], STDOUT_FILENO);
+				close(fd[i][1]);
+			}
+			execute_command(current_cmd);
+			exit(0);
+		}
+	i++;
+	current_cmd = current_cmd->next;
+	}
+	i = 0;
+	while (i < nbr_cmd - 1)
+	{
+		close(fd[i][0]);
+		close(fd[i][1]);
+		i++;
+	}
+	i = 0;
+	while (i < nbr_cmd)
+	{
+		waitpid(pid[i], NULL, 0);
+		i++;
+	}
+}
+
+void	echo(t_cmds *cmd_lst)
 {
 	int	new_line;
+	int	i;
 	
+	i = 0;
 	new_line = 0;
-	current = current->next;
-    	if (current && current->token == SPC)
-    		current = current->next;
-    	while (check_newline(current) == 1) //check s'il y a plusieurs -n a la suite et les passes fout newline à 1 (bool)
-    	{
-    		current = current->next;
-    		current = current->next;
-    		if (current && current->token == SPC)
-    			current = current->next;
-    		new_line = 1;
-    	}
-    	while (current && current->token != PIPE) //&& !(strncmp(current->content, "\\n", 3) == 0)) //ecris le reste
-    	{
-    		if (current->token == SPC && ft_strlen(current->content) > 1)
-    		{
-    			printf("%c", ' ');
-    			current = current->next;
-    		}
-    		else
-    		{
-    			printf("%s", current->content);	
-    			current = current->next;
-    		}
-    	}
+	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
+		i++;
+	if (strncmp(cmd_lst->args + i, "-n", 2) == 0)
+	{
+		new_line = 1;
+		i += 2;
+	}
+	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
+		i++;
+	printf("%s", cmd_lst->args + i);
     	if (new_line == 0) // newline en fonction du booleen
     		printf("\n");
-    	return (current);
 }	
 
-t_token	*check_command(t_token *current) // test command de base avec le premier string
+void	execute_command(t_cmds *cmd_lst)
 {
-	//t_token *current = token_lst;
-	int	check;
-	
-	check = 0;
-	while (current && current->token == SPC) //|| strncmp(current->content, "\\n", 3) == 0))
-    		current = current->next;
-	if (current && (strncmp(current->content, "exit", 4) == 0) && !(current->next))
+  	if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command, "exit", 4) == 0))
 	{
-    		free_token_lst(current);
     		exit(1) ;
     	}
-    	if (current && (strncmp(current->content, "echo", 5) == 0))
-    	{
-    		current = echo(current);
-    		check = 1;
-    	}
-    	/*if ((ft_strncmp(rl, "ls", 2) == 0) && (current->next) && current->next->token == SPC)
-    	{
-		while ((d = readdir(mydir)) != NULL)
-			printf("%s\n", d->d_name);     // fonction pour ls
-               	return (1);
-        }*/
-        if (current && current->token == PIPE)
-        	current = current->next;
-        if (current && check == 1)
-        	current = check_command(current);
-    	return (current);
+    	else if (cmd_lst && cmd_lst->command != NULL && (strncmp(cmd_lst->command, "echo", 5) == 0))
+    		echo(cmd_lst);
 }
         	
 int	main(int argc, char **argv)
@@ -407,11 +523,8 @@ int	main(int argc, char **argv)
 	char	*rl;
 	//DIR *mydir;
 	//struct dirent *d;
-	t_token	*token_lst;
-	//const char *dir_path = "/home/brh/Bureau/minishell"; //mettre ton path si tu veux tester
-	
-	token_lst = NULL;
-	rl = NULL;
+	t_cmds *cmds = NULL;
+	t_token *token_lst = NULL;
 	/*mydir = opendir(dir_path); 
 	if (mydir == NULL) // fonction ls check path valide
 	{
@@ -422,6 +535,7 @@ int	main(int argc, char **argv)
 	{
 	//mydir = opendir(dir_path);
 		i = 1;
+		rl = NULL;
 		while (i < argc) //on utilisera stdinput et gnl pour mettre dans rl
 		{
 			rl = ft_strjoin(rl, argv[i]);
@@ -429,21 +543,14 @@ int	main(int argc, char **argv)
 		}
     		rl = readline("minishell > ");
     		token(rl, &token_lst);
+    		cmds = token_to_commands(token_lst);
     		free(rl);
-    		t_token *current = token_lst;
-    		if(current)
+    		free_token_lst(token_lst);
+    		token_lst = NULL;
+    		if(cmds)
     		{
-    			while (token_lst->token == SPC && token_lst->next)
-    				token_lst = token_lst->next;
-    			current = check_command(current);
-    			while (current)
-        		{
-        			printf(" %s ->  %s", get_token_name(current->token), current->content);
-        			printf("\n");
-        			current = current->next;
-        		}
-        		free_token_lst(token_lst);
-        		token_lst = NULL;
+    			pipe_pipe(&cmds);
+    			//exec_pipes(current);
         	}
     	//closedir(mydir);
     	}
