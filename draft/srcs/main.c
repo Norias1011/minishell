@@ -107,7 +107,11 @@ void	echo(t_cmds *cmd_lst) // cmd echo
 	}
 	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
 		i++;
-	printf("%s", cmd_lst->args + i);
+	while (cmd_lst->args[i] && cmd_lst->args[i] != ' ')
+	{
+		printf("%c", cmd_lst->args[i]);
+		i++;
+	}
 	if (new_line == 0) // newline en fonction du booleen
 		printf("\n");
 }
@@ -141,7 +145,7 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env) // execute les c
 		}
 		free(paths);
     		free(args);
-		perror("execve");
+		perror(cmd_lst->command);
 		exit (-1);
 	}
 	i = 0;
