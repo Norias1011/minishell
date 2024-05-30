@@ -6,16 +6,19 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/22 13:27:36 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:42:55 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include "../libft/libft.h"
 # include <dirent.h>
 # include <errno.h>
 # include <readline/history.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
@@ -27,9 +30,6 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include "../libft/libft.h"
-#include <readline/readline.h>
-#include <readline/history.h>
 
 # define DEFAULT "\001\033[0;39m\002"
 # define RED "\001\033[1;91m\002"
@@ -56,7 +56,7 @@ typedef enum token_lex
 	L_D_ARROW,
 	R_D_ARROW,
 	QUOTE_STRING,
-}		t_token_lex;
+}					t_token_lex;
 
 typedef struct s_env
 {
@@ -68,16 +68,16 @@ typedef struct s_env
 typedef struct s_token
 {
 	char			*content;
-	t_token_lex	token;
+	t_token_lex		token;
 	struct s_token	*next;
-}		t_token;
+}					t_token;
 
 typedef struct s_cmds
 {
 	char			*command;
 	char			*args;
 	struct s_cmds	*next;
-}		t_cmds;
+}					t_cmds;
 
 typedef struct s_minishell
 {
@@ -107,23 +107,24 @@ void				new_prompt(int signo);
 
 bool				input_user_parser(t_minishell *minishell);
 
-char	**split_paths(t_cmds *cmd, t_env *env);
-int	get_arg_size(t_token **liste);
-t_cmds	*get_last_cmd(t_cmds *stash);
-int	token_string(char *rl, t_token *new, int i);
-int	token_space(char *rl, t_token *new, int i);
-int	token_symbol(char *rl, t_token *new, int i);
-void	add_token(t_token **token_lst, t_token *new_token);
-t_token_lex	get_symbol(char *symbol);
-int	is_metachar(char c);
-void	free_token_lst(t_token *token_lst);
-t_cmds	*token_to_commands(t_token *token_list);
-void	token(char *rl, t_token **token_lst);
-void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env);
-int	ft_isalpha(int c);
-unsigned int	ft_strlcpy(char *dest, char const *src, unsigned int size);
-int	ft_isdigit(int c);
-int	ft_strncmp(char const *str1, char const *str2, unsigned int n);
-t_token	*check_command(t_token *token_lst);
+char				**split_paths(t_cmds *cmd, t_env *env);
+int					get_arg_size(t_token **liste);
+t_cmds				*get_last_cmd(t_cmds *stash);
+int					token_string(char *rl, t_token *new, int i);
+int					token_space(char *rl, t_token *new, int i);
+int					token_symbol(char *rl, t_token *new, int i);
+void				add_token(t_token **token_lst, t_token *new_token);
+t_token_lex			get_symbol(char *symbol);
+int					is_metachar(char c);
+void				free_token_lst(t_token *token_lst);
+t_cmds				*token_to_commands(t_token *token_list);
+void				token(char *rl, t_token **token_lst);
+void				execute_command(t_cmds *cmd_lst, t_env *env_s, char **env);
+int					ft_isalpha(int c);
+unsigned int		ft_strlcpy(char *dest, char const *src, unsigned int size);
+int					ft_isdigit(int c);
+int					ft_strncmp(char const *str1, char const *str2,
+						unsigned int n);
+t_token				*check_command(t_token *token_lst);
 
 #endif

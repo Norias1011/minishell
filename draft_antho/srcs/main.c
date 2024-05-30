@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:08:08 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/30 04:03:00 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 19:05:49 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	minishell_loop(t_minishell *minishell)
 	while (1)
 	{
 		signal_handler();
-		minishell->prompt = readline("minishell$ > ");
+		minishell->prompt = readline(get_pwd(minishell));
 		if (!minishell->prompt)
 			clean_exit(minishell, EXIT_SUCCESS);
 		if (input_user_parser(minishell) == false)

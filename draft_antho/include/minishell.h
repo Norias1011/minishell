@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/30 03:52:04 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 19:05:13 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ void				free_all(t_minishell *minishell);
 
 int					init_mini_shell(t_minishell *minishell, char **env);
 int					init_env(t_minishell *minishell, char **env);
+char				*get_env_value(t_minishell *minishell, char *key);
+char				*get_pwd(t_minishell *minishell);
 
 /* signal.c functions */
 
