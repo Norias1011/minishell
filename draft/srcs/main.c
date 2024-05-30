@@ -53,11 +53,6 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 	i = 0;
 	while (current_cmd) //tant qu'il y a des cmd on les lance dans les pipes avec parents / enfant 
 	{
-		/*if (nbr_cmd == 1)
-		{
-			execute_command(current_cmd, env_s, env);
-			exit(0);
-		}*/
 		pid[i] = fork();
 		if (pid[i] < 0)
 			exit(-1);
@@ -69,7 +64,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 				close(fd[i][0]);
 				close(fd[i][1]);
 			}
-			else if (i == nbr_cmd - 1 && i > 0) //dernier process ecris ce qu'il a recu du process d'avant donc le resultat
+			else if (i == nbr_cmd - 1) //dernier process ecris ce qu'il a recu du process d'avant donc le resultat
 			{
 				dup2(fd[i - 1][0], STDIN_FILENO);
 				close(fd[i - 1][1]);
@@ -112,7 +107,7 @@ void	echo(t_cmds *cmd_lst) // cmd echo qui marche pas pour juste echo la salope 
 
 	i = 0;
 	new_line = 1;
-	if (cmd_lst->args == NULL) // fix echo avec ça mais bon bof quoi
+	if (cmd_lst->args == NULL) // fix echo avec ça mais bon bof quoi est ce que args null = il peut meme pas check args[0] = '\0' ?
 	{
 		printf("\n");
 		return ;
