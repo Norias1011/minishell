@@ -97,25 +97,27 @@ void	echo(t_cmds *cmd_lst) // cmd echo
 	int	i;
 
 	i = 0;
-	new_line = 0;
-	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
+	new_line = 1;
+	while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == ' ') // passe les premiers espace
 		i++;
-	if (strncmp(cmd_lst->args + i, "-n", 2) == 0)
+	if (cmd_lst->args[i] != '\0' && (strncmp(cmd_lst->args + i, "-n", 2) == 0) && ((cmd_lst->args[i + 2] == ' ') || !cmd_lst->args[i + 2] || (cmd_lst->args[i + 2] == 'n'))) //check -n avec possibilite -nnnnnnnn...
 	{
-		new_line = 1;
 		i += 2;
-	}
-	while (cmd_lst->args[i] && cmd_lst->args[i] == ' ')
-		i++;
-	while (cmd_lst->args[i])
-	{
-		while (cmd_lst->args[i] == ' ' && (cmd_lst->args[i + 1] == ' ' || cmd_lst->args[i + 1] == '\0'))
+		new_line = 0;
+		while (cmd_lst->args[i] == 'n')
 			i++;
-		if (cmd_lst->args[i] != '\0')
+	}
+	while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == ' ') // vire les espace pour le -n
+		i++;
+	while (cmd_lst->args[i] != '\0') //tant que y a des trucs a ecrire
+	{
+		while (cmd_lst->args[i] == ' ' && (cmd_lst->args[i + 1] == ' ' || !cmd_lst->args[i + 1])) // vire les espaces entre les mots en en gardant 1
+			i++;
+		if (cmd_lst->args[i]) // print
 			printf("%c", cmd_lst->args[i]);
 		i++;
 	}
-	if (new_line == 0) // newline en fonction du booleen
+	if (new_line == 1) // newline en fonction du booleen
 		printf("\n");
 }
 
@@ -128,16 +130,12 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env) // execute les c
 	paths = split_paths(cmd_lst, env_s); //split tous les path possibles en tableau avec le nom de la commande a la fin
 	args = ft_split(ft_strjoin(cmd_lst->command, cmd_lst->args), ' '); // split tous les arguments dans un tableau d'arguments
 	i = 0;
-	if (!cmd_lst->command)
-	{
-		free(paths);
-		free(args);
-		return ;
-	}
 	if (strncmp(cmd_lst->command, "exit", 4) == 0)
-		exit(1);
-	else if (strncmp(cmd_lst->command, "echo", 5) == 0)
+		perror("exit");
+	else if (strncmp(cmd_lst->command, "echo", 4) == 0)
 		echo(cmd_lst);
+	/*else if (strncmp(cmd_lst->command, "cd", 3) == 0)
+		cd(cmd_lst);*/
 	else
 	{
 		while (paths[i])
@@ -179,11 +177,16 @@ void	minishell_loop(t_minishell *minishell)
 			free(minishell->prompt);
 			clean_exit(minishell, EXIT_FAILURE);
 		}*/
-		token(minishell->prompt, &minishell->token);
-		minishell->cmds = token_to_commands(minishell->token);
-		free(minishell->prompt);
-		minishell->token = NULL;
-		pipe_pipe(&minishell->cmds, minishell->env_s, minishell->env);
+		if (input_user_parser(minishell) == false)
+			clean_exit(minishell, EXIT_FAILURE);
+		else
+		{
+			token(minishell->prompt, &minishell->token);
+			minishell->cmds = token_to_commands(minishell->token);
+			free(minishell->prompt);
+			minishell->token = NULL;
+			pipe_pipe(&minishell->cmds, minishell->env_s, minishell->env);
+		}
 		/*parse_cmd(cmd);
 		free(line);
 		free(cmd);*/

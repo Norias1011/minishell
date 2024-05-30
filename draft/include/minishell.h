@@ -13,15 +13,20 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-
+# include <dirent.h>
+# include <errno.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <signal.h>
+# include <stdbool.h>
 # include <stdio.h>
-# include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
-# include <sys/wait.h>
-# include <sys/types.h>
+# include <strings.h>
 # include <sys/stat.h>
-# include <dirent.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <unistd.h>
 # include "../libft/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -99,6 +104,8 @@ int					init_env(t_minishell *minishell, char **env);
 void				signal_handler(void);
 void				nothing_signal(void);
 void				new_prompt(int signo);
+
+bool				input_user_parser(t_minishell *minishell);
 
 char	**split_paths(t_cmds *cmd, t_env *env);
 int	get_arg_size(t_token **liste);
