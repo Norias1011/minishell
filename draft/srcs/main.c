@@ -55,7 +55,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 	{
 		pid[i] = fork();
 		if (pid[i] < 0)
-			exit(-1);
+			exit(EXIT_FAILURE);
 		else if (pid[i] == 0)
 		{
 			if (i == 0) // premier process
@@ -80,7 +80,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 				close(fd[i][1]); 
 			}
 			execute_command(current_cmd, env_s, env);
-			exit(0);
+			exit(EXIT_SUCCESS);
 		}
 		i++;
 		current_cmd = current_cmd->next;
@@ -98,6 +98,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 		waitpid(pid[i], NULL, 0);
 		i++;
 	}
+	free(fd);
 }
 
 void	echo(t_cmds *cmd_lst) // cmd echo qui marche pas pour juste echo la salope la 
@@ -146,7 +147,7 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env) // execute les c
 	i = 0;
 	if (strncmp(cmd_lst->command, "exit", 4) == 0)
 		perror("exit");
-	else if (strncmp(cmd_lst->command, "echo", 4) == 0)
+	else if (strncmp(cmd_lst->command, "echo", 5) == 0)
 		echo(cmd_lst);
 	/*else if (strncmp(cmd_lst->command, "cd", 3) == 0)
 		cd(cmd_lst);*/
