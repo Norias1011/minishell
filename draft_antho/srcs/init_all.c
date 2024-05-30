@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/29 16:39:51 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 03:25:06 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	init_mini_shell(t_minishell *minishell, char **env)
 		printf("Error: init_env failed\n");
 		return (0);
 	}
+	minishell->prompt = NULL;
 	// init working directory
 	// init le reste
 	return (1);

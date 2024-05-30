@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:08:02 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/29 14:15:35 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 03:59:44 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,6 @@ int					ft_toupper(int c);
 int					ft_memcmp(const void *str1, const void *str2, size_t n);
 int					ft_strncmp(const char *str1, const char *str2, size_t n);
 char				*ft_strndup(const char *s, size_t n);
+int					ft_strcmp(char *s1, char *s2);
 
 #endif

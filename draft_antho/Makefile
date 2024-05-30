@@ -9,7 +9,7 @@ NAME = minishell
 SRCSDIR = srcs
 OBJSDIR = $(SRCSDIR)/objs
 
-SRCS = main utils init_all signal\
+SRCS = main utils init_all signal user_parsing\
 
 OBJS = $(addprefix $(OBJSDIR)/, $(addsuffix .o, $(SRCS)))
 

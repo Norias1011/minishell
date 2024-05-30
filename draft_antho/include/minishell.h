@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/29 16:23:27 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 03:52:04 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -88,5 +89,9 @@ int					init_env(t_minishell *minishell, char **env);
 void				signal_handler(void);
 void				nothing_signal(void);
 void				new_prompt(int signo);
+
+/* user_parsing.c functions */
+
+bool				input_user_parser(t_minishell *minishell);
 
 #endif

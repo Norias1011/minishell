@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:08:08 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/29 16:34:10 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 04:03:00 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ int	main(int argc, char *argv[], char **env)
 /* loop de minishell avec la gestion des signaux ainsi que le parsing et l'execution*/
 void	minishell_loop(t_minishell *minishell)
 {
-	char	**cmd;
-
+	// char	**cmd;
 	print_prompt();
 	while (1)
 	{
@@ -34,12 +33,16 @@ void	minishell_loop(t_minishell *minishell)
 		minishell->prompt = readline("minishell$ > ");
 		if (!minishell->prompt)
 			clean_exit(minishell, EXIT_SUCCESS);
-		cmd = ft_split(minishell->prompt, ' ');
+		if (input_user_parser(minishell) == false)
+			clean_exit(minishell, EXIT_FAILURE);
+		else
+			continue ;
+		/*cmd = ft_split(minishell->prompt, ' ');
 		if (!cmd)
 		{
 			free(minishell->prompt);
 			clean_exit(minishell, EXIT_FAILURE);
-		}
+		}*/
 		/*parse_cmd(cmd);
 		free(line);
 		free(cmd);*/
