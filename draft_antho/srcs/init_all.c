@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/30 19:08:51 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/30 19:21:26 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	*get_env_value(t_minishell *minishell, char *key)
 	while (tmp)
 	{
 		if (!ft_strcmp(tmp->key, key))
-			return (ft_strjoin(tmp->value, "$ "));
+			return (tmp->value);
 		tmp = tmp->next;
 	}
 	return (NULL);
@@ -74,5 +74,18 @@ char	*get_env_value(t_minishell *minishell, char *key)
 
 char	*get_pwd(t_minishell *minishell)
 {
-	return (get_env_value(minishell, "PWD"));
+	char	*logname;
+	char	*tmp;
+	char	*logname_color;
+	char	*pwd;
+	char	*final_prompt;
+
+	logname = get_env_value(minishell, "LOGNAME");
+	tmp = ft_strjoin(logname, ":");
+	logname_color = ft_strjoin(CYAN, tmp);
+	pwd = get_env_value(minishell, "PWD");
+	pwd = ft_strjoin(MAGENTA, pwd);
+	final_prompt = ft_strjoin(logname_color, pwd);
+	final_prompt = ft_strjoin(final_prompt, "$ ");
+	return (final_prompt);
 }
