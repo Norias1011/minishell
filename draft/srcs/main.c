@@ -48,6 +48,11 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 	i = 0;
 	while (current_cmd) //tant qu'il y a des cmd on les lance dans les pipes avec parents / enfant 
 	{
+		/*if (nbr_cmd == 1)
+		{
+			execute_command(current_cmd, env_s, env);
+			exit(0);
+		}*/
 		pid[i] = fork();
 		if (pid[i] < 0)
 			exit(-1);
@@ -91,7 +96,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 	}
 }
 
-void	echo(t_cmds *cmd_lst) // cmd echo
+void	echo(t_cmds *cmd_lst) // cmd echo qui marche pas pour juste echo la salope la 
 {
 	int	new_line;
 	int	i;
