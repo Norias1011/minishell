@@ -36,6 +36,11 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 
 	nbr_cmd = count_commands(cmd_lst);
 	pid = malloc(nbr_cmd * sizeof(pid_t));
+	if (!pid)
+	{
+		perror("malloc");
+		exit(EXIT_FAILURE);
+	}
 	int(*fd)[2] = malloc((nbr_cmd) * sizeof(*fd));
 	current_cmd = *cmd_lst;
 	i = 0;
@@ -62,18 +67,22 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 			{ 
 				dup2(fd[i][1], STDOUT_FILENO);
 				close(fd[i][0]);
+				close(fd[i][1]);
 			}
 			else if (i == nbr_cmd - 1 && i > 0) //dernier process ecris ce qu'il a recu du process d'avant donc le resultat
 			{
 				dup2(fd[i - 1][0], STDIN_FILENO);
 				close(fd[i - 1][1]);
+				close(fd[i - 1][0]);
 			}
 			else
 			{
 				dup2(fd[i - 1][0], STDIN_FILENO); //process precent lie au process suivant v
 				dup2(fd[i][1], STDOUT_FILENO); // process suivant
 				close(fd[i - 1][1]);
-				close(fd[i][0]); 
+				close(fd[i][0]);
+				close(fd[i - 1][0]);
+				close(fd[i][1]); 
 			}
 			execute_command(current_cmd, env_s, env);
 			exit(0);
@@ -103,22 +112,27 @@ void	echo(t_cmds *cmd_lst) // cmd echo qui marche pas pour juste echo la salope 
 
 	i = 0;
 	new_line = 1;
+	if (cmd_lst->args == NULL) // fix echo avec ça mais bon bof quoi
+	{
+		printf("\n");
+		return ;
+	}
 	while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == ' ') // passe les premiers espace
 		i++;
-	if (cmd_lst->args[i] != '\0' && (strncmp(cmd_lst->args + i, "-n", 2) == 0) && ((cmd_lst->args[i + 2] == ' ') || !cmd_lst->args[i + 2] || (cmd_lst->args[i + 2] == 'n'))) //check -n avec possibilite -nnnnnnnn...
+	if (cmd_lst->args[i] != '\0' && (strncmp(cmd_lst->args + i, "-n", 2) == 0) && ((cmd_lst->args[i + 2] == ' ') || cmd_lst->args[i + 2] == '\0' || (cmd_lst->args[i + 2] == 'n'))) //check -n avec possibilite -nnnnnnnn...
 	{
 		i += 2;
 		new_line = 0;
-		while (cmd_lst->args[i] == 'n')
+		while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == 'n')
 			i++;
 	}
 	while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == ' ') // vire les espace pour le -n
 		i++;
 	while (cmd_lst->args[i] != '\0') //tant que y a des trucs a ecrire
 	{
-		while (cmd_lst->args[i] == ' ' && (cmd_lst->args[i + 1] == ' ' || !cmd_lst->args[i + 1])) // vire les espaces entre les mots en en gardant 1
+		while (cmd_lst->args[i] == ' ' && (cmd_lst->args[i + 1] == ' ' || cmd_lst->args[i + 1] == '\0')) // vire les espaces entre les mots en en gardant 1
 			i++;
-		if (cmd_lst->args[i]) // print
+		if (cmd_lst->args[i] != '\0') // print
 			printf("%c", cmd_lst->args[i]);
 		i++;
 	}
