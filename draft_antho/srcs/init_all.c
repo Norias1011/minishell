@@ -97,7 +97,7 @@ char	*get_pwd(t_minishell *minishell)
 	return (final_prompt);
 }
 
-void	set_env_value(t_minishell *minishell, char *key, char *value)
+void	set_env_value(t_minishell *minishell, char *key, char *val)
 {
 	t_env	*tmp;
 
@@ -107,7 +107,7 @@ void	set_env_value(t_minishell *minishell, char *key, char *value)
 		if (!ft_strcmp(tmp->key, key))
 		{
 			free(tmp->value);
-			tmp->value = ft_strdup(value);
+			tmp->value =  ft_strdup(val);
 			return ;
 		}
 		tmp = tmp->next;

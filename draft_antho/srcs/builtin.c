@@ -13,7 +13,6 @@
 #include "../include/minishell.h"
 
 void	echo(t_cmds *cmd_lst)
-// cmd echo qui marche pas pour juste echo la salope la
 {
 	int new_line;
 	int i;
@@ -85,47 +84,53 @@ void	env_built(t_minishell *minishell, t_cmds *cmd_lst)
 	}
 }
 
-int	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
+void	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
 {
 	char	*path;
 	char	*pwd;
 
 	printf("cd called\n");
 	if (cmd_lst->args == NULL)
-		return (cd_home(minishell));
+	{
+		cd_home(minishell);
+		return ;
+	}
 	else
 		path = cmd_lst->args;
 	if (chdir(path) == -1)
 	{
 		perror("cd");
-		return (0);
+		return ;
 	}
 	set_env_value(minishell, "OLDPWD", get_env_value(minishell, "PWD"));
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 	{
 		printf("Error: getcwd failed\n");
-		return (0);
+		return ;
 	}
 	set_env_value(minishell, "PWD", pwd);
-	return (1);
+	return ;
 }
 
 int	cd_home(t_minishell *minishell)
 {
 	char	*home;
+	char	*old;
 
 	printf("BEFORE PWD: %s\n", get_env_value(minishell, "PWD"));
 	printf("BEFORE OLDPWD: %s\n", get_env_value(minishell, "OLDPWD"));
-	set_env_value(minishell, "OLDPWD", get_env_value(minishell, "PWD"));
+	//set_env_value(minishell, "OLDPWD", get_env_value(minishell, "PWD"));
+	old = get_env_value(minishell, "PWD");
 	home = get_env_value(minishell, "HOME");
 	if (home == NULL)
 	{
 		printf("Error: get_env_value failed\n");
 		return (0);
 	}
-	if (chdir(home) == 0)
+	if (chdir(home) != -1)
 	{
+		set_env_value(minishell, "OLDPWD", old);
 		set_env_value(minishell, "PWD", home);
 		printf("AFTER PWD: %s\n", get_env_value(minishell, "PWD"));
 		printf("AFTER OLDPWD: %s\n", get_env_value(minishell, "OLDPWD"));

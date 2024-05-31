@@ -59,9 +59,13 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	int i;
 
 	pid_t *pid;
-	t_cmds *current_cmd;
 
 	nbr_cmd = count_commands(cmd_lst);
+	if (nbr_cmd == 1)
+	{
+		execute_command(*cmd_lst, env_s, env, minishell);
+		return ;
+	}
 	pid = malloc(nbr_cmd * sizeof(pid_t));
 	if (!pid)
 	{
@@ -69,7 +73,6 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		exit(EXIT_FAILURE);
 	}
 	int(*fd)[2] = malloc((nbr_cmd) * sizeof(*fd));
-	current_cmd = *cmd_lst;
 	i = 0;
 	while (i < nbr_cmd - 1) // init des pipes
 	{
@@ -78,7 +81,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		i++;
 	}
 	i = 0;
-	while (current_cmd)
+	while (*cmd_lst)
 	// tant qu'il y a des cmd on les lance dans les pipes avec parents enfant
 	{
 		pid[i] = fork();
@@ -86,9 +89,9 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 			exit(EXIT_FAILURE);
 		else if (pid[i] == 0)
 		{
-			if (current_cmd->file)
+			if ((*cmd_lst)->file)
 				// check de >> si y a on ecris dans le fichier le resultat
-				handle_redirection(current_cmd);
+				handle_redirection(*cmd_lst);
 			if (i == 0) // premier process
 			{
 				dup2(fd[i][1], STDOUT_FILENO);
@@ -112,11 +115,11 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 				close(fd[i - 1][0]);
 				close(fd[i][1]);
 			}
-			execute_command(current_cmd, env_s, env, minishell);
-			exit(EXIT_SUCCESS);
+			execute_command(*cmd_lst, env_s, env, minishell);
+			return ;
 		}
 		i++;
-		current_cmd = current_cmd->next;
+		(*cmd_lst) = (*cmd_lst)->next;
 	}
 	i = 0;
 	while (i < nbr_cmd - 1)

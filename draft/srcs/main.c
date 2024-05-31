@@ -83,7 +83,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 			exit(EXIT_FAILURE);
 		else if (pid[i] == 0)
 		{
-			if (current_cmd->file) // check de >> si y a on ecris dans le fichier le resultat
+			if (current_cmd->file) // check des redirections
 				handle_redirection(current_cmd);
 			if (i == 0) // premier process
 			{ 

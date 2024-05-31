@@ -162,7 +162,7 @@ int					token_symbol(char *rl, t_token *new, int i);
 void				echo(t_cmds *cmd_lst);
 void				pwd(t_minishell *minishell, t_cmds *cmd_lst);
 void				env_built(t_minishell *minishell, t_cmds *cmd_lst);
-int					cd_built(t_minishell *minishell, t_cmds *cmd_lst);
+void					cd_built(t_minishell *minishell, t_cmds *cmd_lst);
 // int					oldpwd_built(t_minishell *minishell, t_cmds *cmd_lst);
 int					cd_home(t_minishell *minishell);
 
