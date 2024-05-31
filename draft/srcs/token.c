@@ -69,22 +69,22 @@ t_cmds	*token_to_commands(t_token *token_list) // transforme les tokens en une l
 			if (args == NULL)
 				return (NULL);
 			args[0] = '\0';
-			while (current && (current->token != PIPE && current->token != L_ARROW && current->token != R_ARROW && current->token != L_D_ARROW && current->token != R_D_ARROW))
+			while (current && (current->token != PIPE && current->token != L_ARROW && current->token != R_ARROW && current->token != L_D_ARROW && current->token != R_D_ARROW)) // tant que y a pas de redirection et que c'est pas fin de la commande
 			{
-				args = ft_strjoin(args, current->content);
+				args = ft_strjoin(args, current->content); // on recupere les args
 				current = current->next;
 			}
-			if (current && (current->token == L_ARROW || current->token == R_ARROW || current->token == L_D_ARROW || current->token == R_D_ARROW))
+			if (current && (current->token == L_ARROW || current->token == R_ARROW || current->token == L_D_ARROW || current->token == R_D_ARROW)) // si y a les redirections
 			{
-				while (current && (current->token != STRING && current->token != PIPE))
+				while (current && (current->token != STRING && current->token != PIPE)) // on cherche le nom de fichier s'il y en a un
 					current = current->next;
-				if (current && current->token == STRING)
+				if (current && current->token == STRING) // si y a un nom de fichier on le prend
 					file = strdup(current->content);
-				while (current && current->token != PIPE)
+				while (current && current->token != PIPE) // on vire le reste jusqu au pipe ou a la fin 
 					current = current->next;
 			}
 		}
-		if (current)
+		if (current) // passe la pipe si on est pas a la fin 
 			current = current->next;
 		add_command(&cmd_list, cmd, args, file);
 		free(args);

@@ -59,7 +59,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 			exit(EXIT_FAILURE);
 		else if (pid[i] == 0)
 		{
-			if (current_cmd->file) // check de >>
+			if (current_cmd->file) // check de >> si y a on ecris dans le fichier le resultat
 			{
 				//printf("\n%s\n", current_cmd->file);
 				fd_file = open(current_cmd->file, O_WRONLY | O_CREAT, O_APPEND);
