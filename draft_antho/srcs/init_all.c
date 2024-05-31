@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/30 19:21:26 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/31 16:57:59 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,24 @@ char	*get_pwd(t_minishell *minishell)
 	pwd = get_env_value(minishell, "PWD");
 	pwd = ft_strjoin(MAGENTA, pwd);
 	final_prompt = ft_strjoin(logname_color, pwd);
+	final_prompt = ft_strjoin(final_prompt, DEFAULT);
 	final_prompt = ft_strjoin(final_prompt, "$ ");
 	return (final_prompt);
+}
+
+void	set_env_value(t_minishell *minishell, char *key, char *value)
+{
+	t_env	*tmp;
+
+	tmp = minishell->env_s;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, key))
+		{
+			free(tmp->value);
+			tmp->value = ft_strdup(value);
+			return ;
+		}
+		tmp = tmp->next;
+	}
 }
