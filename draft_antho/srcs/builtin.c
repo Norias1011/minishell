@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:53:37 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 17:53:47 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/31 19:09:34 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,16 +114,15 @@ int	cd_home(t_minishell *minishell)
 {
 	char	*home;
 
-	home = get_env_value(minishell, "HOME");
 	set_env_value(minishell, "OLDPWD", get_env_value(minishell, "PWD"));
+	home = get_env_value(minishell, "HOME");
 	if (home == NULL)
 	{
 		printf("Error: get_env_value failed\n");
 		return (0);
 	}
-	if (chdir(home) == -1)
+	if (chdir(home) == 0)
 	{
-		perror("cd");
 		return (set_env_value(minishell, "PWD", home), 0);
 	}
 	return (1);
