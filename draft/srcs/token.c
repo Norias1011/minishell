@@ -12,7 +12,7 @@
 
 #include "../include/minishell.h"
 
-void	add_command(t_cmds **cmd_list, char *command, char *args, char *file)
+void	add_command(t_cmds **cmd_list, char *command, char *args, char *file, char *redir)
 {
 	t_cmds	*new_cmd;
 	t_cmds	*last;
@@ -24,12 +24,15 @@ void	add_command(t_cmds **cmd_list, char *command, char *args, char *file)
 	new_cmd->args = NULL;
 	new_cmd->next = NULL;
 	new_cmd->file = NULL;
+	new_cmd->redir = NULL;
 	if (args != NULL)
 		new_cmd->args = strdup(args);
 	if (command != NULL)
 		new_cmd->command = strdup(command);
 	if (file != NULL)
 		new_cmd->file = strdup(file);
+	if (redir != NULL)
+		new_cmd->redir = strdup(redir);
 	if (*cmd_list == NULL)
 		*cmd_list = new_cmd;
 	else
@@ -46,6 +49,7 @@ t_cmds	*token_to_commands(t_token *token_list) // transforme les tokens en une l
 	char	*cmd;
 	char	*args;
 	char	*file;
+	char	*redir;
 	int		arg_size;
 
 	cmd_list = NULL;
@@ -53,6 +57,7 @@ t_cmds	*token_to_commands(t_token *token_list) // transforme les tokens en une l
 	cmd = NULL;
 	args = NULL;
 	file = NULL;
+	redir = NULL;
 	arg_size = 0;
 	while (current)
 	{
@@ -76,6 +81,7 @@ t_cmds	*token_to_commands(t_token *token_list) // transforme les tokens en une l
 			}
 			if (current && (current->token == L_ARROW || current->token == R_ARROW || current->token == L_D_ARROW || current->token == R_D_ARROW)) // si y a les redirections
 			{
+				redir = strdup(current->content);
 				while (current && (current->token != STRING && current->token != PIPE)) // on cherche le nom de fichier s'il y en a un
 					current = current->next;
 				if (current && current->token == STRING) // si y a un nom de fichier on le prend
@@ -86,11 +92,12 @@ t_cmds	*token_to_commands(t_token *token_list) // transforme les tokens en une l
 		}
 		if (current) // passe la pipe si on est pas a la fin 
 			current = current->next;
-		add_command(&cmd_list, cmd, args, file);
+		add_command(&cmd_list, cmd, args, file, redir);
 		free(args);
 		cmd = NULL;
 		args = NULL;
 		file = NULL;
+		redir = NULL;
 		arg_size = 0;
 	}
 	return (cmd_list);

@@ -78,6 +78,7 @@ typedef struct s_cmds
 	char			*command;
 	char			*args;
 	char			*file;
+	char			*redir;
 	struct s_cmds	*next;
 }					t_cmds;
 
