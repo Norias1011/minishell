@@ -31,6 +31,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 {
 	int		nbr_cmd;
 	int		i;
+	int		fd_file;
 	pid_t	*pid;
 	t_cmds	*current_cmd;
 
@@ -58,6 +59,13 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env) // programme de pipe
 			exit(EXIT_FAILURE);
 		else if (pid[i] == 0)
 		{
+			if (current_cmd->file) // check de >>
+			{
+				//printf("\n%s\n", current_cmd->file);
+				fd_file = open(current_cmd->file, O_WRONLY | O_CREAT, O_APPEND);
+                		dup2(fd_file, STDOUT_FILENO);
+                		close(fd_file);
+                	}
 			if (i == 0) // premier process
 			{ 
 				dup2(fd[i][1], STDOUT_FILENO);

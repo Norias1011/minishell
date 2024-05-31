@@ -29,6 +29,7 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+#include <fcntl.h>
 # include <unistd.h>
 
 # define DEFAULT "\001\033[0;39m\002"
@@ -76,6 +77,7 @@ typedef struct s_cmds
 {
 	char			*command;
 	char			*args;
+	char			*file;
 	struct s_cmds	*next;
 }					t_cmds;
 
