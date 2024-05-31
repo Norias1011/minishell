@@ -56,7 +56,7 @@ t_cmds	*token_to_commands(t_token *token_list) // transforme les tokens en une l
 	arg_size = 0;
 	while (current)
 	{
-		while (current && current->token != STRING)
+		while (current && current->token == SPC) // recuperation de la commande
 			current = current->next;
 		if (current == NULL)
 			break ;
