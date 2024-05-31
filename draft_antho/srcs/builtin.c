@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:53:37 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 19:09:34 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/05/31 23:52:50 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ int	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
 	char	*path;
 	char	*pwd;
 
+	printf("cd called\n");
 	if (cmd_lst->args == NULL)
 		return (cd_home(minishell));
 	else
@@ -114,6 +115,8 @@ int	cd_home(t_minishell *minishell)
 {
 	char	*home;
 
+	printf("BEFORE PWD: %s\n", get_env_value(minishell, "PWD"));
+	printf("BEFORE OLDPWD: %s\n", get_env_value(minishell, "OLDPWD"));
 	set_env_value(minishell, "OLDPWD", get_env_value(minishell, "PWD"));
 	home = get_env_value(minishell, "HOME");
 	if (home == NULL)
@@ -123,7 +126,10 @@ int	cd_home(t_minishell *minishell)
 	}
 	if (chdir(home) == 0)
 	{
-		return (set_env_value(minishell, "PWD", home), 0);
+		set_env_value(minishell, "PWD", home);
+		printf("AFTER PWD: %s\n", get_env_value(minishell, "PWD"));
+		printf("AFTER OLDPWD: %s\n", get_env_value(minishell, "OLDPWD"));
+		return (0);
 	}
 	return (1);
 }

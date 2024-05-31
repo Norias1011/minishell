@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 16:57:59 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/01 00:10:47 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,13 @@ int	init_mini_shell(t_minishell *minishell, char **env)
 		printf("Error: init_env failed\n");
 		return (0);
 	}
+	if (!init_cd(minishell))
+	{
+		printf("Error: init_cd failed\n");
+		return (0);
+	}
 	minishell->prompt = NULL;
+	minishell->env = env;
 	// init working directory
 	// init le reste
 	return (1);
@@ -106,4 +112,26 @@ void	set_env_value(t_minishell *minishell, char *key, char *value)
 		}
 		tmp = tmp->next;
 	}
+}
+
+int	init_cd(t_minishell *minishell)
+{
+	char	*pwd;
+	char	*oldpwd;
+
+	pwd = get_env_value(minishell, "PWD");
+	if (pwd == NULL)
+	{
+		printf("Error: get_env_value failed\n");
+		return (0);
+	}
+	set_env_value(minishell, "OLDPWD", pwd);
+	oldpwd = getcwd(NULL, 0);
+	if (oldpwd == NULL)
+	{
+		printf("Error: getcwd failed\n");
+		return (0);
+	}
+	set_env_value(minishell, "PWD", oldpwd);
+	return (1);
 }
