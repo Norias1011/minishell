@@ -62,11 +62,11 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	pid_t *pid;
 
 	nbr_cmd = count_commands(cmd_lst);
-	/*if (nbr_cmd == 1)
+	if (nbr_cmd == 1)
 	{
 		execute_command(*cmd_lst, env_s, env, minishell);
 		return ;
-	}*/
+	}
 	pid = malloc(nbr_cmd * sizeof(pid_t));
 	if (!pid)
 	{
@@ -117,9 +117,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 				close(fd[i][1]);
 			}
 			execute_command(*cmd_lst, env_s, env, minishell);
-			if (nbr_cmd > 1)
-				exit(EXIT_SUCCESS);
-			return ;
+			exit(EXIT_SUCCESS);
 		}
 		i++;
 		(*cmd_lst) = (*cmd_lst)->next;

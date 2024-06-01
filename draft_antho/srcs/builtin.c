@@ -88,15 +88,21 @@ void	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
 {
 	char	*path;
 	char	*pwd;
+	int	i;
 
 	printf("cd called\n");
+	i = 0;
 	if (cmd_lst->args == NULL)
 	{
 		cd_home(minishell);
 		return ;
 	}
 	else
-		path = cmd_lst->args;
+	{
+		while (cmd_lst->args[i] == ' ')
+			i++;
+		path = ft_strdup(cmd_lst->args + i);
+	}
 	if (chdir(path) == -1)
 	{
 		perror("cd");
