@@ -164,6 +164,6 @@ void				pwd(t_minishell *minishell, t_cmds *cmd_lst);
 void				env_built(t_minishell *minishell, t_cmds *cmd_lst);
 void					cd_built(t_minishell *minishell, t_cmds *cmd_lst);
 // int					oldpwd_built(t_minishell *minishell, t_cmds *cmd_lst);
-int					cd_home(t_minishell *minishell);
+void					cd_home(t_minishell *minishell);
 
 #endif

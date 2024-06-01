@@ -51,6 +51,22 @@ void	handle_redirection(t_cmds *current_cmd)
 	}
 }
 
+int	is_builtin(char	*cmd)
+{
+	if (strncmp(cmd, "exit", 5) == 0)
+		return (1);
+	if (strncmp(cmd, "echo", 5) == 0)
+		return (1);
+	if (strncmp(cmd, "pwd", 4) == 0)
+		return (1);
+	if (strncmp(cmd, "env", 4) == 0)
+		return (1);
+	if (strncmp(cmd, "cd", 3) == 0)
+		return (1);
+	return (0);
+}
+	
+
 void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		t_minishell *minishell)
 // programme de pipe
@@ -62,8 +78,11 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	pid_t *pid;
 
 	nbr_cmd = count_commands(cmd_lst);
-	if (nbr_cmd == 1)
+	if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
 	{
+		if ((*cmd_lst)->file)
+				// check de >> si y a on ecris dans le fichier le resultat
+				handle_redirection(*cmd_lst);
 		execute_command(*cmd_lst, env_s, env, minishell);
 		return ;
 	}
@@ -166,7 +185,7 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 		while (paths[i])
 		{
 			if (execve(paths[i], args, env) != -1) // execute
-				break ;
+				return ;
 			i++;
 		}
 		free(paths);

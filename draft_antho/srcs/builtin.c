@@ -93,15 +93,15 @@ void	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
 	printf("cd called\n");
 	i = 0;
 	if (cmd_lst->args == NULL)
-	{
-		cd_home(minishell);
-		return ;
-	}
+		return (cd_home(minishell));
 	else
 	{
 		while (cmd_lst->args[i] == ' ')
 			i++;
-		path = ft_strdup(cmd_lst->args + i);
+		if (cmd_lst->args[i] != '\0')
+			path = ft_strdup(cmd_lst->args + i);
+		else
+			return (cd_home(minishell));
 	}
 	if (chdir(path) == -1)
 	{
@@ -119,7 +119,7 @@ void	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
 	return ;
 }
 
-int	cd_home(t_minishell *minishell)
+void	cd_home(t_minishell *minishell)
 {
 	char	*home;
 	char	*old;
@@ -132,7 +132,7 @@ int	cd_home(t_minishell *minishell)
 	if (home == NULL)
 	{
 		printf("Error: get_env_value failed\n");
-		return (0);
+		return ;
 	}
 	if (chdir(home) != -1)
 	{
@@ -140,9 +140,9 @@ int	cd_home(t_minishell *minishell)
 		set_env_value(minishell, "PWD", home);
 		printf("AFTER PWD: %s\n", get_env_value(minishell, "PWD"));
 		printf("AFTER OLDPWD: %s\n", get_env_value(minishell, "OLDPWD"));
-		return (0);
+		return ;
 	}
-	return (1);
+	return ;
 }
 
 /*int	oldpwd_built(t_minishell *minishell, t_cmds *cmd_lst)
