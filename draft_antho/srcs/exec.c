@@ -55,10 +55,6 @@ int	is_builtin(char	*cmd)
 {
 	if (strncmp(cmd, "exit", 5) == 0)
 		return (1);
-	if (strncmp(cmd, "echo", 5) == 0)
-		return (1);
-	if (strncmp(cmd, "pwd", 4) == 0)
-		return (1);
 	if (strncmp(cmd, "env", 4) == 0)
 		return (1);
 	if (strncmp(cmd, "cd", 3) == 0)
@@ -81,8 +77,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
 	{
 		if ((*cmd_lst)->file)
-				// check de >> si y a on ecris dans le fichier le resultat
-				handle_redirection(*cmd_lst);
+			handle_redirection(*cmd_lst);
 		execute_command(*cmd_lst, env_s, env, minishell);
 		return ;
 	}
