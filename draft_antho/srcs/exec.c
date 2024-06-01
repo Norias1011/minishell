@@ -57,31 +57,33 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 {
 	int nbr_cmd;
 	int i;
+	int(*fd)[2] = NULL;
 
 	pid_t *pid;
 
 	nbr_cmd = count_commands(cmd_lst);
-	if (nbr_cmd == 1)
+	/*if (nbr_cmd == 1)
 	{
 		execute_command(*cmd_lst, env_s, env, minishell);
 		return ;
-	}
+	}*/
 	pid = malloc(nbr_cmd * sizeof(pid_t));
 	if (!pid)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
-	int(*fd)[2] = malloc((nbr_cmd) * sizeof(*fd));
+	if (nbr_cmd > 0)
+		fd = malloc((nbr_cmd - 1) * sizeof(*fd));
 	i = 0;
 	while (i < nbr_cmd - 1) // init des pipes
 	{
 		if (pipe(fd[i]) == -1)
-			exit(-1);
+			exit(EXIT_FAILURE);
 		i++;
 	}
 	i = 0;
-	while (*cmd_lst)
+	while (i < nbr_cmd)
 	// tant qu'il y a des cmd on les lance dans les pipes avec parents enfant
 	{
 		pid[i] = fork();
@@ -92,23 +94,22 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 			if ((*cmd_lst)->file)
 				// check de >> si y a on ecris dans le fichier le resultat
 				handle_redirection(*cmd_lst);
-			if (i == 0) // premier process
+			if (i == 0 && nbr_cmd > 1) // premier process
 			{
 				dup2(fd[i][1], STDOUT_FILENO);
 				close(fd[i][0]);
 				close(fd[i][1]);
 			}
-			else if (i == nbr_cmd - 1)
+			else if (i == nbr_cmd - 1 && i > 0)
 			// dernier process ecris ce qu'il a recu du process d'avant donc le resultat
 			{
 				dup2(fd[i - 1][0], STDIN_FILENO);
 				close(fd[i - 1][1]);
 				close(fd[i - 1][0]);
 			}
-			else
+			else if (nbr_cmd > 1)
 			{
-				dup2(fd[i - 1][0], STDIN_FILENO);
-				// process precent lie au process suivant v
+				dup2(fd[i - 1][0], STDIN_FILENO); // process precent lie au process suivant v
 				dup2(fd[i][1], STDOUT_FILENO); // process suivant
 				close(fd[i - 1][1]);
 				close(fd[i][0]);
@@ -116,13 +117,15 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 				close(fd[i][1]);
 			}
 			execute_command(*cmd_lst, env_s, env, minishell);
+			if (nbr_cmd > 1)
+				exit(EXIT_SUCCESS);
 			return ;
 		}
 		i++;
 		(*cmd_lst) = (*cmd_lst)->next;
 	}
 	i = 0;
-	while (i < nbr_cmd - 1)
+	while (i < nbr_cmd - 1 && nbr_cmd > 1)
 	{
 		close(fd[i][0]);
 		close(fd[i][1]);
