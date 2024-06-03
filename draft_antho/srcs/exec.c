@@ -27,6 +27,33 @@ int	count_commands(t_cmds **cmd_lst) // compte le nombre de cmd dans la liste
 	return (i);
 }
 
+void	handle_redirection_solo(t_cmds *current_cmd, int fd)
+{
+	int	fd_file;
+
+	if (strncmp(current_cmd->redir, ">>", 2) == 0)
+	{
+		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		dup2(fd_file, fd);
+		close(fd);
+		close(fd_file);
+	}
+	else if (strncmp(current_cmd->redir, ">", 1) == 0)
+	{
+		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		dup2(fd_file, fd);
+		close(fd);
+		close(fd_file);
+	}
+	else if (strncmp(current_cmd->redir, "<", 1) == 0)
+	{
+		fd_file = open(current_cmd->file, O_RDONLY);
+		dup2(fd_file, fd);
+		close(fd);
+		close(fd_file);
+	}
+}
+
 void	handle_redirection(t_cmds *current_cmd)
 {
 	int	fd_file;
@@ -77,27 +104,27 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	pid_t *pid;
 
 	nbr_cmd = count_commands(cmd_lst);
-	/*if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
-	{
-		if ((*cmd_lst)->file)
-			handle_redirection(*cmd_lst);
-		execute_command(*cmd_lst, env_s, env, minishell);
-		return ;
-	}*/
 	pid = malloc(nbr_cmd * sizeof(pid_t));
 	if (!pid)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
-	if (nbr_cmd > 0)
-		fd = malloc((nbr_cmd - 1) * sizeof(*fd));
+	fd = malloc((nbr_cmd) * sizeof(*fd));
 	i = 0;
 	while (i < nbr_cmd - 1) // init des pipes
 	{
 		if (pipe(fd[i]) == -1)
 			exit(EXIT_FAILURE);
 		i++;
+	}
+	if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
+	{
+		execute_command(*cmd_lst, env_s, env, minishell);
+		int save_out = dup(STDOUT_FILENO);
+		if ((*cmd_lst)->file)
+			handle_redirection_solo(*cmd_lst, save_out);
+		return ;
 	}
 	i = 0;
 	while (i < nbr_cmd)
@@ -132,12 +159,6 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 				close(fd[i - 1][1]);
 				close(fd[i][0]);
 				close(fd[i - 1][0]);
-				close(fd[i][1]);
-			}
-			else 
-			{
-				dup2(fd[i][1], STDIN_FILENO);
-				close(fd[i][0]);
 				close(fd[i][1]);
 			}
 			execute_command(*cmd_lst, env_s, env, minishell);
