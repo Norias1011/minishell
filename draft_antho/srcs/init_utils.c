@@ -77,22 +77,24 @@ int	check_dollar(t_minishell *minishell, char *rl, t_token *new, int i)
 
 	tmp = minishell->env_s;
 	j = 0;
-	i++;
 	while (ft_isalpha(rl[i + j]) || ft_isdigit(rl[i + j]))
 		j++;
 	tmp_string = malloc(sizeof(char) * j);
-	ft_strlcpy(tmp_string, rl + i - 1, j + 2);
+	ft_strlcpy(tmp_string, rl + i, j + 1);
 	new->content = ft_strdup("");
 	while (tmp)
 	{
-		if (!ft_strcmp(tmp->key, tmp_string))
+		if (!ft_strncmp(tmp->key, tmp_string, 5))
 		{
 			free(new->content);
 			new->content = ft_strdup(tmp->value);
+			return (j);
 		}
 		tmp = tmp->next;
 	}
-	return (j + 1);
+	while (rl[i + j] && rl[i + j] == ' ')
+		j++;
+	return (j);
 }
 
 /*void	dollar_quote(t_minishell *minishell, char *str)
@@ -112,7 +114,7 @@ int	check_dollar(t_minishell *minishell, char *rl, t_token *new, int i)
 			while (ft_isalpha(str[i + j]) || ft_isdigit(str[i + j]))
 				j++;
 			ft_strlcpy(string, str + i, j);
-			dollar_sign(minishell, string);
+			string = dollar_sign(minishell, string);
 			while (x < j)
 			{
 				str[i] = str[i + x];
@@ -145,6 +147,16 @@ void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 			add = token_symbol(rl, new, i);
 		new->next = NULL;
 		i += add;
+		if (new->token == L_ARROW || new->token == R_ARROW)
+		{
+			add = check_arrow(rl, new, i);
+			i += add;
+		}
+		if (new->token == DOLLAR && (ft_isalpha(rl[i]) || ft_isdigit(rl[i])))
+		{
+			add = check_dollar(minishell, rl, new, i);
+			i += add;
+		}
 		if ((new->token == QUOTE || new->token == DOUBLEQUOTE))
 		{
 			add = quote_handler(rl, new, i);
@@ -157,16 +169,6 @@ void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 			else
 				add_token(token_lst, new);
 			continue ;
-		}
-		if (new->token == L_ARROW || new->token == R_ARROW)
-		{
-			add = check_arrow(rl, new, i);
-			i += add;
-		}
-		if (new->token == DOLLAR && (ft_isalpha(rl[i]) || ft_isdigit(rl[i])))
-		{
-			add = check_dollar(minishell, rl, new, i);
-			i += add;
 		}
 		add_token(token_lst, new);
 	}

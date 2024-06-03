@@ -77,13 +77,13 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	pid_t *pid;
 
 	nbr_cmd = count_commands(cmd_lst);
-	if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
+	/*if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
 	{
 		if ((*cmd_lst)->file)
 			handle_redirection(*cmd_lst);
 		execute_command(*cmd_lst, env_s, env, minishell);
 		return ;
-	}
+	}*/
 	pid = malloc(nbr_cmd * sizeof(pid_t));
 	if (!pid)
 	{
@@ -134,6 +134,12 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 				close(fd[i - 1][0]);
 				close(fd[i][1]);
 			}
+			else 
+			{
+				dup2(fd[i][1], STDIN_FILENO);
+				close(fd[i][0]);
+				close(fd[i][1]);
+			}
 			execute_command(*cmd_lst, env_s, env, minishell);
 			exit(EXIT_SUCCESS);
 		}
@@ -141,7 +147,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		(*cmd_lst) = (*cmd_lst)->next;
 	}
 	i = 0;
-	while (i < nbr_cmd - 1 && nbr_cmd > 1)
+	while (i < nbr_cmd - 1)
 	{
 		close(fd[i][0]);
 		close(fd[i][1]);
