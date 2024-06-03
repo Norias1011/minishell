@@ -53,6 +53,8 @@ t_token_lex	get_symbol(char *symbol) // check les diffrents symboles
 		res = L_ARROW;
 	if (symbol[0] == '>')
 		res = R_ARROW;
+	if (symbol[0] == '$')
+		res = DOLLAR;
 	return (res);
 }
 
@@ -69,6 +71,8 @@ int	is_metachar(char c)
 	if (c == '|')
 		return (1);
 	if (c == ' ')
+		return (1);
+	if (c == '$')
 		return (1);
 	return (0);
 }

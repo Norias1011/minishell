@@ -15,17 +15,11 @@
 int	quote_handler(char *rl, t_token *new, int i)
 {
 	int	j;
-	int	is_dollar;
 
 	j = 0;
-	is_dollar = 0;
 	while (rl[i + j] && rl[i + j] != rl[i - 1])
-	{
-		if (rl[i + j] == '$' && rl[i - 1] == '"')
-			is_dollar = 1;
 		j++;
-	}
-	if (i + j == ft_strlen(rl) && rl[i + j] != rl[i - 1]) //&& j != 0)
+	if (i + j == ft_strlen(rl) && rl[i + j] != rl[i - 1])
 		return (-1);
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
@@ -42,8 +36,6 @@ int	quote_handler(char *rl, t_token *new, int i)
 	{
 		ft_strlcpy(new->content, rl + i, j + 1);
 		new->token = QUOTE_STRING;
-		if (is_dollar == 1)
-			new->token = STRING;
 	}
 	return (j);
 }
@@ -77,7 +69,61 @@ int	check_arrow(char *rl, t_token *new, int i)
 	return (0);
 }
 
-void	token(char *rl, t_token **token_lst)
+int	check_dollar(t_minishell *minishell, char *rl, t_token *new, int i)
+{
+	int	j;
+	char	*tmp_string;
+	t_env	*tmp;
+
+	tmp = minishell->env_s;
+	j = 0;
+	i++;
+	while (ft_isalpha(rl[i + j]) || ft_isdigit(rl[i + j]))
+		j++;
+	tmp_string = malloc(sizeof(char) * j);
+	ft_strlcpy(tmp_string, rl + i - 1, j + 2);
+	new->content = ft_strdup("");
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, tmp_string))
+		{
+			free(new->content);
+			new->content = ft_strdup(tmp->value);
+		}
+		tmp = tmp->next;
+	}
+	return (j + 1);
+}
+
+/*void	dollar_quote(t_minishell *minishell, char *str)
+{
+	int	i;
+	int	j;
+	char	string;
+	t_env	*tmp;
+	
+	i = 0;
+	while (str[i])
+	{
+		j = 0;
+		tmp = minishell->env_s;
+		if (str[i] == '$')
+		{
+			while (ft_isalpha(str[i + j]) || ft_isdigit(str[i + j]))
+				j++;
+			ft_strlcpy(string, str + i, j);
+			dollar_sign(minishell, string);
+			while (x < j)
+			{
+				str[i] = str[i + x];
+				x++;
+			}
+		}
+		i++;
+	}
+}*/
+
+void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 {
 	int		i;
 	int		add;
@@ -105,6 +151,7 @@ void	token(char *rl, t_token **token_lst)
 			if (add != -1)
 			{
 				i += add + 1;
+				//dollar_quote(minishell, new->content);
 				add_token(token_lst, new);
 			}
 			else
@@ -114,6 +161,11 @@ void	token(char *rl, t_token **token_lst)
 		if (new->token == L_ARROW || new->token == R_ARROW)
 		{
 			add = check_arrow(rl, new, i);
+			i += add;
+		}
+		if (new->token == DOLLAR && (ft_isalpha(rl[i]) || ft_isdigit(rl[i])))
+		{
+			add = check_dollar(minishell, rl, new, i);
 			i += add;
 		}
 		add_token(token_lst, new);
