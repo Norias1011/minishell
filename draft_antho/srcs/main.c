@@ -44,7 +44,7 @@ void	minishell_loop(t_minishell *minishell)
 			clean_exit(minishell, EXIT_FAILURE);
 		else
 		{
-			token(minishell->prompt, &minishell->token);
+			token(minishell, minishell->prompt, &minishell->token);
 			minishell->cmds = token_to_commands(minishell->token);
 			free(minishell->prompt);
 			minishell->token = NULL;

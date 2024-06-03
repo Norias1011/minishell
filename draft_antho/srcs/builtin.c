@@ -39,15 +39,8 @@ void	echo(t_cmds *cmd_lst)
 		while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == 'n')
 			i++;
 	}
-	while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == ' ')
-		// vire les espace pour le -n
-		i++;
 	while (cmd_lst->args[i] != '\0') // tant que y a des trucs a ecrire
 	{
-		while (cmd_lst->args[i] == ' ' && (cmd_lst->args[i + 1] == ' '
-				|| cmd_lst->args[i + 1] == '\0'))
-			// vire les espaces entre les mots en en gardant 1
-			i++;
 		if (cmd_lst->args[i] != '\0') // print
 			printf("%c", cmd_lst->args[i]);
 		i++;
