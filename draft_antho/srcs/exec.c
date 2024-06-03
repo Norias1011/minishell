@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:42:32 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/03 14:25:50 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/03 16:52:49 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ int	is_builtin(char *cmd)
 	if (strncmp(cmd, "cd", 3) == 0)
 		return (1);
 	if (strncmp(cmd, "export", 7) == 0)
+		return (1);
+	if (strncmp(cmd, "unset", 6) == 0)
 		return (1);
 	return (0);
 }
@@ -179,8 +181,8 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 		cd_built(minishell, cmd_lst);
 	else if (strncmp(cmd_lst->command, "export", 7) == 0)
 		export_built(minishell, cmd_lst);
-	/*else if (strncmp(cmd_lst->command, "unset", 6) == 0)
-		unset_built(minishell, cmd_lst);*/
+	else if (strncmp(cmd_lst->command, "unset", 6) == 0)
+		unset_built(minishell, cmd_lst);
 	else
 	{
 		while (paths[i])

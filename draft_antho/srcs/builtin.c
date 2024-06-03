@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:53:37 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/03 15:09:37 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/03 16:52:19 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,40 @@ void	export_built(t_minishell *minishell, t_cmds *cmd_lst)
 		set_env_value(minishell, key, value);
 	free(key);
 	free(value);
+}
+
+void	unset_built(t_minishell *minishell, t_cmds *cmd_lst)
+{
+	char	*key;
+	int		i;
+	int		count;
+
+	key = NULL;
+	i = 0;
+	count = 0;
+	if (cmd_lst->args == NULL)
+		return ;
+	while (cmd_lst->args[i] != '\0')
+	{
+		while (cmd_lst->args[i] == ' ' && cmd_lst->args[i] != '\0')
+			i++;
+		while (cmd_lst->args[i] != ' ' && cmd_lst->args[i] != '\0')
+		{
+			i++;
+			count++;
+		}
+	}
+	key = ft_substr(cmd_lst->args, i - count, count);
+	if (env_exist(minishell, key) == 1)
+	{
+		remove_env(minishell, key);
+		free(key);
+	}
+	else
+	{
+		free(key);
+		return ;
+	}
 }
 
 /*int	oldpwd_built(t_minishell *minishell, t_cmds *cmd_lst)

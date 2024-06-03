@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/03 14:19:50 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/03 16:52:21 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,4 +171,29 @@ int	add_env(t_minishell *minishell, char *key, char *value)
 		tmp->next = new_env;
 	}
 	return (1);
+}
+
+void	remove_env(t_minishell *minishell, char *key)
+{
+	t_env	*tmp;
+	t_env	*prev;
+
+	tmp = minishell->env_s;
+	prev = NULL;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, key))
+		{
+			if (prev)
+				prev->next = tmp->next;
+			else
+				minishell->env_s = tmp->next;
+			free(tmp->key);
+			free(tmp->value);
+			free(tmp);
+			return ;
+		}
+		prev = tmp;
+		tmp = tmp->next;
+	}
 }
