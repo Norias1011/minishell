@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:42:32 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 16:55:48 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:25:50 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	handle_redirection(t_cmds *current_cmd)
 	}
 }
 
-int	is_builtin(char	*cmd)
+int	is_builtin(char *cmd)
 {
 	if (strncmp(cmd, "exit", 5) == 0)
 		return (1);
@@ -59,9 +59,10 @@ int	is_builtin(char	*cmd)
 		return (1);
 	if (strncmp(cmd, "cd", 3) == 0)
 		return (1);
+	if (strncmp(cmd, "export", 7) == 0)
+		return (1);
 	return (0);
 }
-	
 
 void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		t_minishell *minishell)
@@ -123,7 +124,8 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 			}
 			else if (nbr_cmd > 1)
 			{
-				dup2(fd[i - 1][0], STDIN_FILENO); // process precent lie au process suivant v
+				dup2(fd[i - 1][0], STDIN_FILENO);
+				// process precent lie au process suivant v
 				dup2(fd[i][1], STDOUT_FILENO); // process suivant
 				close(fd[i - 1][1]);
 				close(fd[i][0]);
@@ -175,6 +177,10 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 		env_built(minishell, cmd_lst);
 	else if (strncmp(cmd_lst->command, "cd", 3) == 0)
 		cd_built(minishell, cmd_lst);
+	else if (strncmp(cmd_lst->command, "export", 7) == 0)
+		export_built(minishell, cmd_lst);
+	/*else if (strncmp(cmd_lst->command, "unset", 6) == 0)
+		unset_built(minishell, cmd_lst);*/
 	else
 	{
 		while (paths[i])

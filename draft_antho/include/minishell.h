@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 19:29:23 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:20:35 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ char				*get_pwd(t_minishell *minishell);
 void				set_env_value(t_minishell *minishell, char *key,
 						char *value);
 int					init_cd(t_minishell *minishell);
+int					env_exist(t_minishell *minishell, char *key);
+int					add_env(t_minishell *minishell, char *key, char *value);
 
 /* signal.c functions */
 
@@ -121,6 +123,7 @@ void				new_prompt(int signo);
 /* user_parsing.c functions */
 
 bool				input_user_parser(t_minishell *minishell);
+char				*dollar_sign(t_minishell *minishell, char *args);
 
 /* exec.c functions */
 
@@ -162,8 +165,9 @@ int					token_symbol(char *rl, t_token *new, int i);
 void				echo(t_cmds *cmd_lst);
 void				pwd(t_minishell *minishell, t_cmds *cmd_lst);
 void				env_built(t_minishell *minishell, t_cmds *cmd_lst);
-void					cd_built(t_minishell *minishell, t_cmds *cmd_lst);
+void				cd_built(t_minishell *minishell, t_cmds *cmd_lst);
 // int					oldpwd_built(t_minishell *minishell, t_cmds *cmd_lst);
-void					cd_home(t_minishell *minishell);
+void				cd_home(t_minishell *minishell);
+void				export_built(t_minishell *minishell, t_cmds *cmd_lst);
 
 #endif

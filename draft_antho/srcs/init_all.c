@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/01 00:10:47 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:19:50 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	set_env_value(t_minishell *minishell, char *key, char *val)
 		if (!ft_strcmp(tmp->key, key))
 		{
 			free(tmp->value);
-			tmp->value =  ft_strdup(val);
+			tmp->value = ft_strdup(val);
 			return ;
 		}
 		tmp = tmp->next;
@@ -133,5 +133,42 @@ int	init_cd(t_minishell *minishell)
 		return (0);
 	}
 	set_env_value(minishell, "PWD", oldpwd);
+	return (1);
+}
+
+int	env_exist(t_minishell *minishell, char *key)
+{
+	t_env	*tmp;
+
+	tmp = minishell->env_s;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, key))
+			return (1);
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
+int	add_env(t_minishell *minishell, char *key, char *value)
+{
+	t_env	*new_env;
+	t_env	*tmp;
+
+	new_env = (t_env *)malloc(sizeof(t_env));
+	if (!new_env)
+		return (0);
+	new_env->key = ft_strdup(key);
+	new_env->value = ft_strdup(value);
+	new_env->next = NULL;
+	if (!minishell->env_s)
+		minishell->env_s = new_env;
+	else
+	{
+		tmp = minishell->env_s;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new_env;
+	}
 	return (1);
 }
