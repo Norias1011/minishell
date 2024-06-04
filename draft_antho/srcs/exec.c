@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:42:32 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/03 16:52:49 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 11:48:07 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,12 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	{
 		pid[i] = fork();
 		if (pid[i] < 0)
+		{
+			// perror("fork");
+			// free(pid);
+			// free(fd);
 			exit(EXIT_FAILURE);
+		}
 		else if (pid[i] == 0)
 		{
 			if ((*cmd_lst)->file)
@@ -180,6 +185,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		waitpid(pid[i], NULL, 0);
 		i++;
 	}
+	// free(pid);
 	free(fd);
 }
 

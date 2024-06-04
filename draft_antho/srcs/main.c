@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:08:08 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 16:27:17 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 11:35:29 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	minishell_loop(t_minishell *minishell)
 		signal_handler();
 		minishell->prompt = NULL;
 		minishell->prompt = readline(get_pwd(minishell));
+		signal_handler_bis();
 		if (!minishell->prompt)
 			clean_exit(minishell, EXIT_SUCCESS);
 		/*cmd = ft_split(minishell->prompt, ' ');

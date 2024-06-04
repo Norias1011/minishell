@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:53:37 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/03 16:52:19 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 11:49:07 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,6 +220,13 @@ void	unset_built(t_minishell *minishell, t_cmds *cmd_lst)
 		free(key);
 		return ;
 	}
+}
+
+int	exit_built(t_minishell *minishell, t_cmds *cmd_lst)
+{
+	(void)minishell;
+	(void)cmd_lst;
+	return (1);
 }
 
 /*int	oldpwd_built(t_minishell *minishell, t_cmds *cmd_lst)

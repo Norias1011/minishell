@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 15:00:53 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/29 16:31:04 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 11:37:11 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,24 @@ void	new_prompt(int signo)
 {
 	(void)signo;
 	printf("\n");
-	// write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+}
+
+void	signal_handler_bis(void)
+{
+	struct sigaction	sa;
+
+	ft_bzero(&sa, sizeof(sa));
+	sa.sa_handler = &new_prompt_bis;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
+}
+
+void	new_prompt_bis(int signo)
+{
+	(void)signo;
+	printf("\n");
+	rl_on_new_line();
 }

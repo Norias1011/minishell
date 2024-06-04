@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:03:28 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 15:42:07 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 11:50:43 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ void	print_prompt(void)
 	printf("░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█");
 	printf("▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░\n");
 	printf("%s░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█",
-		RED);
+		YELLOW);
 	printf("▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░        \n");
 	printf("░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓██████▓▒░░▒▓███");
 	printf("█████▓▒░▒▓██████▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░        \n");
 	printf("░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓");
 	printf("▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░        \n");
 	printf("%s░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓",
-		YELLOW);
+		RED);
 	printf("▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░        \n");
 	printf("░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓");
 	printf("▒░░▒▓█▓▒░▒▓████████▓▒░▒▓████████▓▒░▒▓████████▓▒░ %s\n", DEFAULT);
@@ -48,6 +48,7 @@ void	clean_exit(t_minishell *minishell, int exno)
 /* in this function we can add all the malloc that we have to free*/
 void	free_all(t_minishell *minishell)
 {
+	free(minishell->prompt);
 	if (minishell->env_s)
 	{
 		while (minishell->env_s)
@@ -56,6 +57,27 @@ void	free_all(t_minishell *minishell)
 			free(minishell->env_s->value);
 			free(minishell->env_s);
 			minishell->env_s = minishell->env_s->next;
+		}
+	}
+	if (minishell->cmds)
+	{
+		while (minishell->cmds)
+		{
+			free(minishell->cmds->command);
+			free(minishell->cmds->args);
+			free(minishell->cmds->file);
+			free(minishell->cmds->redir);
+			free(minishell->cmds);
+			minishell->cmds = minishell->cmds->next;
+		}
+	}
+	if (minishell->token)
+	{
+		while (minishell->token)
+		{
+			free(minishell->token->content);
+			free(minishell->token);
+			minishell->token = minishell->token->next;
 		}
 	}
 }
