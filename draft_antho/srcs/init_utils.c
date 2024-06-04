@@ -97,33 +97,81 @@ int	check_dollar(t_minishell *minishell, char *rl, t_token *new, int i)
 	return (j);
 }
 
-/*void	dollar_quote(t_minishell *minishell, char *str)
+char	*dollar_quote(t_minishell *minishell, char *str)
 {
 	int	i;
 	int	j;
-	char	string;
-	t_env	*tmp;
+	int	x;
+	char	*string;
+	char	*word;
 	
 	i = 0;
+	x = 0;
+	string = malloc(sizeof(char) * (dollar_quote_length(minishell, str) + 1));
 	while (str[i])
 	{
 		j = 0;
-		tmp = minishell->env_s;
 		if (str[i] == '$')
 		{
-			while (ft_isalpha(str[i + j]) || ft_isdigit(str[i + j]))
+			i++;
+			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i + j])))
 				j++;
-			ft_strlcpy(string, str + i, j);
-			string = dollar_sign(minishell, string);
-			while (x < j)
+			if (j == 0)
+				i--;
+			word = malloc(sizeof(char) * (j + 1));
+			ft_strlcpy(word, str + i, j + 1);
+			word = dollar_sign(minishell, word);
+			i += j;
+			j = 0;
+			if (word != NULL)
 			{
-				str[i] = str[i + x];
-				x++;
+				while (word[j])
+				{
+					string[x] = word[j];
+					x++;
+					j++;
+				}
+				word = NULL;
 			}
 		}
+		string[x] = str[i];
+		x++;
 		i++;
 	}
-}*/
+	return (string);
+}
+
+int	dollar_quote_length(t_minishell *minishell, char *str)
+{
+	int	i;
+	int	j;
+	int	x;
+	char	*string;
+	
+	i = 0;
+	x = 0;
+	string = NULL;
+	while (str[i])
+	{
+		j = 0;
+		if (str[i] == '$')
+		{
+			i++;
+			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i + j])))
+				j++;
+			string = malloc(sizeof(char) * (j + 1));
+			ft_strlcpy(string, str + i, j + 1);
+			string = dollar_sign(minishell, string);
+			if (string != NULL)
+				x += ft_strlen(string);
+			string = NULL;
+			i += j - 1;
+		}
+		x++;
+		i++;
+	}
+	return (x);
+}
 
 void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 {
@@ -163,7 +211,7 @@ void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 			if (add != -1)
 			{
 				i += add + 1;
-				//dollar_quote(minishell, new->content);
+				new->content = dollar_quote(minishell, new->content);
 				add_token(token_lst, new);
 			}
 			else

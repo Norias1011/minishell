@@ -137,6 +137,7 @@ void				execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 
 /* init_utils.c functions */
 
+int	dollar_quote_length(t_minishell *minishell, char *str);
 int	check_dollar(t_minishell *minishell, char *rl, t_token *new, int i);
 int					quote_handler(char *rl, t_token *new, int i);
 int					check_arrow(char *rl, t_token *new, int i);

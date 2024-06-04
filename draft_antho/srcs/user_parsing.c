@@ -28,11 +28,8 @@ char	*dollar_sign(t_minishell *minishell, char *args)
 	while (tmp)
 	{
 		if (!ft_strcmp(tmp->key, args))
-		{
-			free(args);
 			return (tmp->value);
-		}
 		tmp = tmp->next;
 	}
-	return ("");
+	return (NULL);
 }
