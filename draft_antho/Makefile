@@ -9,7 +9,7 @@ NAME = minishell
 SRCSDIR = srcs
 OBJSDIR = $(SRCSDIR)/objs
 
-SRCS = main utils init_all signal user_parsing exec init_utils spliter token_utils token builtin \
+SRCS = main utils init_all signal user_parsing exec init_utils spliter token_utils token builtin cd env exit export\
 
 OBJS = $(addprefix $(OBJSDIR)/, $(addsuffix .o, $(SRCS)))
 

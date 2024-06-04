@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:34:26 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 12:53:21 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 16:46:25 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,7 @@ int	check_arrow(char *rl, t_token *new, int i)
 	{
 		new->content = malloc(sizeof(char) * (3));
 		if (!new->content)
-		{
-			perror("malloc");
-			free(new);
-			return (0);
-		}
+			return (perror("malloc"), free(new), 0);
 		ft_strlcpy(new->content, rl + i - 1, 3);
 		new->token = L_D_ARROW;
 		return (1);
@@ -60,11 +56,7 @@ int	check_arrow(char *rl, t_token *new, int i)
 	{
 		new->content = malloc(sizeof(char) * (3));
 		if (!new->content)
-		{
-			perror("malloc");
-			free(new);
-			return (0);
-		}
+			return (perror("malloc"), free(new), 0);
 		ft_strlcpy(new->content, rl + i - 1, 3);
 		new->token = R_D_ARROW;
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/03 16:52:21 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 16:43:37 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ int	init_mini_shell(t_minishell *minishell, char **env)
 	}
 	minishell->prompt = NULL;
 	minishell->env = env;
-	// init working directory
-	// init le reste
 	return (1);
 }
 
@@ -42,7 +40,6 @@ int	init_env(t_minishell *minishell, char **env)
 	while (env[i])
 	{
 		new_env = (t_env *)malloc(sizeof(t_env));
-		printf("Je malloc dans init_env\n");
 		if (!new_env)
 			return (0);
 		new_env->key = ft_strndup(env[i], ft_strchr(env[i], '=') - env[i]);
@@ -57,8 +54,6 @@ int	init_env(t_minishell *minishell, char **env)
 				tmp = tmp->next;
 			tmp->next = new_env;
 		}
-		printf("key: %s\n", new_env->key);
-		printf("value: %s\n", new_env->value);
 		i++;
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 13:30:49 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:02:57 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,16 +171,31 @@ int					token_symbol(char *rl, t_token *new, int i);
 
 void				echo(t_cmds *cmd_lst);
 void				pwd(t_minishell *minishell, t_cmds *cmd_lst);
-void				env_built(t_minishell *minishell, t_cmds *cmd_lst);
-void				cd_built(t_minishell *minishell, t_cmds *cmd_lst);
-// int					oldpwd_built(t_minishell *minishell, t_cmds *cmd_lst);
-void				cd_home(t_minishell *minishell);
-void				export_built(t_minishell *minishell, t_cmds *cmd_lst);
 void				unset_built(t_minishell *minishell, t_cmds *cmd_lst);
+void				check_unset(char *args, int *i, int *count);
+
+/* env.c fnctions */
+
+void				env_built(t_minishell *minishell, t_cmds *cmd_lst);
+
+/* export.c functions */
+
+void				export_built(t_minishell *minishell, t_cmds *cmd_lst);
+void				check_export(char *args, int *i, int *count);
+void				check_export_bis(char *args, int *i, int *count);
+void				free_key_value(char *key, char *value);
+
+/* exit.c functions */
+
 int					exit_built(t_minishell *minishell, t_cmds *cmd_lst);
 int					pipe_exist(t_cmds *cmd_lst);
 int					check_exit(char *str);
 int					count_word(char *str, char charset);
 int					nextsteps(char c, char charset);
+
+/* cd.c functions */
+
+int					cd_built(t_minishell *minishell, t_cmds *cmd_lst);
+void				cd_home(t_minishell *minishell);
 
 #endif
