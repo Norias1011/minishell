@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:34:26 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/05/31 15:35:42 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 12:53:21 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	quote_handler(char *rl, t_token *new, int i)
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
 	{
+		perror("malloc");
 		free(new);
 		return (0);
 	}
@@ -47,6 +48,7 @@ int	check_arrow(char *rl, t_token *new, int i)
 		new->content = malloc(sizeof(char) * (3));
 		if (!new->content)
 		{
+			perror("malloc");
 			free(new);
 			return (0);
 		}
@@ -59,6 +61,7 @@ int	check_arrow(char *rl, t_token *new, int i)
 		new->content = malloc(sizeof(char) * (3));
 		if (!new->content)
 		{
+			perror("malloc");
 			free(new);
 			return (0);
 		}
@@ -71,7 +74,7 @@ int	check_arrow(char *rl, t_token *new, int i)
 
 int	check_dollar(t_minishell *minishell, char *rl, t_token *new, int i)
 {
-	int	j;
+	int		j;
 	char	*tmp_string;
 	t_env	*tmp;
 
@@ -88,37 +91,52 @@ int	check_dollar(t_minishell *minishell, char *rl, t_token *new, int i)
 		{
 			free(new->content);
 			new->content = ft_strdup(tmp->value);
+			free(tmp_string);
 			return (j);
 		}
 		tmp = tmp->next;
 	}
 	while (rl[i + j] && rl[i + j] == ' ')
 		j++;
+	free(tmp_string);
 	return (j);
 }
 
 char	*dollar_quote(t_minishell *minishell, char *str)
 {
-	int	i;
-	int	j;
-	int	x;
+	int		i;
+	int		j;
+	int		x;
 	char	*string;
 	char	*word;
-	
+
 	i = 0;
 	x = 0;
 	string = malloc(sizeof(char) * (dollar_quote_length(minishell, str) + 1));
+	if (!string)
+	{
+		perror("malloc");
+		free(string);
+		return (NULL);
+	}
 	while (str[i])
 	{
 		j = 0;
 		if (str[i] == '$')
 		{
 			i++;
-			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i + j])))
+			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i
+						+ j])))
 				j++;
 			if (j == 0)
 				i--;
 			word = malloc(sizeof(char) * (j + 1));
+			if (!word)
+			{
+				perror("malloc");
+				free(word);
+				return (NULL);
+			}
 			ft_strlcpy(word, str + i, j + 1);
 			word = dollar_sign(minishell, word);
 			i += j;
@@ -143,11 +161,11 @@ char	*dollar_quote(t_minishell *minishell, char *str)
 
 int	dollar_quote_length(t_minishell *minishell, char *str)
 {
-	int	i;
-	int	j;
-	int	x;
+	int		i;
+	int		j;
+	int		x;
 	char	*string;
-	
+
 	i = 0;
 	x = 0;
 	string = NULL;
@@ -157,9 +175,16 @@ int	dollar_quote_length(t_minishell *minishell, char *str)
 		if (str[i] == '$')
 		{
 			i++;
-			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i + j])))
+			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i
+						+ j])))
 				j++;
 			string = malloc(sizeof(char) * (j + 1));
+			if (!string)
+			{
+				perror("malloc");
+				free(string);
+				return (0);
+			}
 			ft_strlcpy(string, str + i, j + 1);
 			string = dollar_sign(minishell, string);
 			if (string != NULL)
@@ -170,6 +195,7 @@ int	dollar_quote_length(t_minishell *minishell, char *str)
 		x++;
 		i++;
 	}
+	free(string);
 	return (x);
 }
 
@@ -185,7 +211,11 @@ void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 	{
 		new = malloc(sizeof(t_token));
 		if (!new)
+		{
+			perror("malloc");
+			free(new);
 			return ;
+		}
 		if ((ft_isalpha(rl[i]) || ft_isdigit(rl[i]))
 			|| (is_metachar(rl[i]) == 0))
 			add = token_string(rl, new, i);

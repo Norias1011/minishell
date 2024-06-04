@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:42:32 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 11:48:07 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 13:43:11 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,9 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		pid[i] = fork();
 		if (pid[i] < 0)
 		{
-			// perror("fork");
-			// free(pid);
-			// free(fd);
+			perror("fork");
+			free(pid);
+			free(fd);
 			exit(EXIT_FAILURE);
 		}
 		else if (pid[i] == 0)
@@ -185,7 +185,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		waitpid(pid[i], NULL, 0);
 		i++;
 	}
-	// free(pid);
+	free(pid);
 	free(fd);
 }
 
@@ -203,7 +203,7 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 	// split tous les arguments dans un tableau d'arguments
 	i = 0;
 	if (strncmp(cmd_lst->command, "exit", 4) == 0)
-		perror("exit");
+		exit_built(minishell, cmd_lst);
 	else if (strncmp(cmd_lst->command, "echo", 5) == 0)
 		echo(cmd_lst);
 	else if (strncmp(cmd_lst->command, "pwd", 4) == 0)

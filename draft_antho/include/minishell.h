@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 11:36:19 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 13:30:49 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,8 @@ void				execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 
 /* init_utils.c functions */
 
-int				dollar_quote_length(t_minishell *minishell, char *str);
-int						check_dollar(t_minishell *minishell, char *rl, t_token *new,
+int					dollar_quote_length(t_minishell *minishell, char *str);
+int					check_dollar(t_minishell *minishell, char *rl, t_token *new,
 						int i);
 int					quote_handler(char *rl, t_token *new, int i);
 int					check_arrow(char *rl, t_token *new, int i);
@@ -177,5 +177,10 @@ void				cd_built(t_minishell *minishell, t_cmds *cmd_lst);
 void				cd_home(t_minishell *minishell);
 void				export_built(t_minishell *minishell, t_cmds *cmd_lst);
 void				unset_built(t_minishell *minishell, t_cmds *cmd_lst);
+int					exit_built(t_minishell *minishell, t_cmds *cmd_lst);
+int					pipe_exist(t_cmds *cmd_lst);
+int					check_exit(char *str);
+int					count_word(char *str, char charset);
+int					nextsteps(char c, char charset);
 
 #endif
