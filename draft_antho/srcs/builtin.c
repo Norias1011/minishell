@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:53:37 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 13:52:47 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:00:48 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,6 +235,8 @@ int	exit_built(t_minishell *minishell, t_cmds *cmd_lst)
 		code_exit = errno;
 	else
 		code_exit = check_exit(cmd_lst->args);
+	if (code_exit == 255 || code_exit == 1)
+		return (0);
 	clean_exit(minishell, code_exit);
 	return (1);
 }
