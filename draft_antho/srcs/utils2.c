@@ -15,7 +15,7 @@
 void	add_command(t_cmds **cmd_list, t_cmds *new_cmd)
 {
 	t_cmds	*last;
-	
+
 	if (*cmd_list == NULL)
 		*cmd_list = new_cmd;
 	else
@@ -37,7 +37,7 @@ t_file	*get_last_file(t_file *stash)
 void	add_file(t_file **file_list, t_file *new_file)
 {
 	t_file	*last;
-	
+
 	if (*file_list == NULL)
 		*file_list = new_file;
 	else

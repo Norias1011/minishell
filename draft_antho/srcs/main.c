@@ -23,7 +23,7 @@ int	main(int argc, char *argv[], char **env)
 	minishell_loop(&minishell);
 	return (0);
 }
-/* loop de minishell avec la gestion des signaux ainsi que le parsing et l'execution*/
+
 void	minishell_loop(t_minishell *minishell)
 {
 	print_prompt();

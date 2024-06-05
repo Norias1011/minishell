@@ -16,7 +16,7 @@ void	erase_space(char *str)
 {
 	int	i;
 	int	j;
-	
+
 	i = 0;
 	j = 0;
 	while (str[i] != '\0' && str[i] != ' ')
@@ -25,7 +25,6 @@ void	erase_space(char *str)
 		j++;
 	if (i + j == ft_strlen(str))
 		str[i] = '\0';
-		
 }
 
 int	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
@@ -45,7 +44,7 @@ int	cd_built(t_minishell *minishell, t_cmds *cmd_lst)
 			path = ft_strdup(cmd_lst->args + i);
 		else
 			return (cd_home(minishell), 0);
-	erase_space(path);
+		erase_space(path);
 	}
 	if (chdir(path) == -1)
 		return (perror("cd"), 0);

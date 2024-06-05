@@ -14,10 +14,10 @@
 
 char	**split_paths(t_cmds *cmd, t_env *env, t_minishell *minishell)
 {
-	t_env *current;
-	char **paths;
-	char **result;
-	int i;
+	t_env	*current;
+	char	**paths;
+	char	**result;
+	int		i;
 
 	paths = NULL;
 	result = NULL;

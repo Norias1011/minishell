@@ -120,7 +120,7 @@ char	*dollar_quote(t_minishell *minishell, char *str)
 			i++;
 			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i
 						+ j])))
-				j++;
+					j++;
 			if (j == 0)
 				i--;
 			word = malloc(sizeof(char) * (j + 1));
@@ -170,7 +170,7 @@ int	dollar_quote_length(t_minishell *minishell, char *str)
 			i++;
 			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i
 						+ j])))
-				j++;
+					j++;
 			string = malloc(sizeof(char) * (j + 1));
 			if (!string)
 			{
@@ -241,6 +241,5 @@ void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 			continue ;
 		}
 		add_token(token_lst, new);
-		//free(new);
 	}
 }

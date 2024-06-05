@@ -14,17 +14,17 @@
 
 void	set_cmd_null(t_cmds *new)
 {
-		new->args = NULL;
-		new->next = NULL;
-		new->command = NULL;
-		new->file = NULL;
+	new->args = NULL;
+	new->next = NULL;
+	new->command = NULL;
+	new->file = NULL;
 }
 
 void	cmd_args(t_cmds *new, t_token **tkn)
 {
-	char *tmp;
-	char *arg;
-	
+	char	*tmp;
+	char	*arg;
+
 	tmp = NULL;
 	while (*tkn && (*tkn)->token != PIPE)
 	{
@@ -50,7 +50,7 @@ void	cmd_args(t_cmds *new, t_token **tkn)
 void	cmd_redir(t_cmds *new, t_token **tkn)
 {
 	t_file	*file;
-	
+
 	file = malloc(sizeof(t_file));
 	file->next = NULL;
 	file->name = NULL;
@@ -67,10 +67,10 @@ void	cmd_redir(t_cmds *new, t_token **tkn)
 	add_file(&new->file, file);
 }
 
-
 t_cmds	*create_cmd(t_token **tkn)
 {
-	t_cmds *new;
+	t_cmds	*new;
+
 	new = malloc(sizeof(t_cmds));
 	if (new == NULL)
 		return (NULL);
@@ -97,9 +97,9 @@ t_cmds	*create_cmd(t_token **tkn)
 
 t_cmds	*token_to_commands(t_token *tkn)
 {
-	t_cmds *cmd_list;
-	t_cmds *new;
-	
+	t_cmds	*cmd_list;
+	t_cmds	*new;
+
 	new = NULL;
 	cmd_list = NULL;
 	while (tkn)
@@ -111,5 +111,3 @@ t_cmds	*token_to_commands(t_token *tkn)
 	}
 	return (cmd_list);
 }
-
-
