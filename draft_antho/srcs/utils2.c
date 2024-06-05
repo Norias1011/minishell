@@ -24,3 +24,25 @@ void	add_command(t_cmds **cmd_list, t_cmds *new_cmd)
 		last->next = new_cmd;
 	}
 }
+
+t_file	*get_last_file(t_file *stash)
+{
+	if (stash == NULL)
+		return (NULL);
+	while (stash->next)
+		stash = stash->next;
+	return (stash);
+}
+
+void	add_file(t_file **file_list, t_file *new_file)
+{
+	t_file	*last;
+	
+	if (*file_list == NULL)
+		*file_list = new_file;
+	else
+	{
+		last = get_last_file(*file_list);
+		last->next = new_file;
+	}
+}

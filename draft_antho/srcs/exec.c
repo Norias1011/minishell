@@ -38,20 +38,24 @@ void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
 	out = dup(STDOUT_FILENO);
 	in = dup(STDIN_FILENO);
 	
-	if (strncmp(current_cmd->redir, ">>", 2) == 0)
+	while (current_cmd->file)
 	{
-		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		dup2(fd_file, STDOUT_FILENO);
-	}
-	else if (strncmp(current_cmd->redir, ">", 1) == 0)
-	{
-		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		dup2(fd_file, STDOUT_FILENO);
-	}
-	else if (strncmp(current_cmd->redir, "<", 1) == 0)
-	{
-		fd_file = open(current_cmd->file, O_RDONLY);
-		dup2(fd_file, STDIN_FILENO);
+		if (strncmp(current_cmd->file->redir, ">>", 2) == 0)
+		{
+			fd_file = open(current_cmd->file->name, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			dup2(fd_file, STDOUT_FILENO);
+		}
+		else if (strncmp(current_cmd->file->redir, ">", 1) == 0)
+		{
+			fd_file = open(current_cmd->file->name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			dup2(fd_file, STDOUT_FILENO);
+		}
+		else if (strncmp(current_cmd->file->redir, "<", 1) == 0)
+		{
+			fd_file = open(current_cmd->file->name, O_RDONLY);
+			dup2(fd_file, STDIN_FILENO);
+		}
+		current_cmd->file = current_cmd->file->next;
 	}
 	execute_command(current_cmd, env_s, env, minishell);
 	dup2(out, STDOUT_FILENO);

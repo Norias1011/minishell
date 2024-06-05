@@ -16,9 +16,8 @@ void	set_cmd_null(t_cmds *new)
 {
 		new->args = NULL;
 		new->next = NULL;
-		new->file = NULL;
 		new->command = NULL;
-		new->redir = NULL;
+		new->file = NULL;
 }
 
 void	cmd_args(t_cmds *new, t_token **tkn)
@@ -26,33 +25,39 @@ void	cmd_args(t_cmds *new, t_token **tkn)
 	char *tmp;
 	
 	tmp = NULL;
-	while ((*tkn) && (*tkn)->token != PIPE && !is_arrow(*tkn))
+	while (*tkn && (*tkn)->token != PIPE)
 	{
-		tmp = ft_strdup((*tkn)->content);
-		if (new->args == NULL)
-			new->args = tmp;
-		else
-			new->args = ft_strjoin(new->args, tmp);
-		(*tkn) = (*tkn)->next;
+		while ((*tkn) && (*tkn)->token != PIPE && !is_arrow(*tkn))
+		{
+			tmp = ft_strdup((*tkn)->content);
+			if (new->args == NULL)
+				new->args = tmp;
+			else
+				new->args = ft_strjoin(new->args, tmp);
+			(*tkn) = (*tkn)->next;
+		}
+		if ((*tkn) && is_arrow(*tkn))
+			cmd_redir(new, tkn);
 	}
 }
 
 void	cmd_redir(t_cmds *new, t_token **tkn)
 {
-	if ((*tkn) && is_arrow(*tkn))
-	{
-		new->redir = strdup((*tkn)->content);
-		while ((*tkn) && (*tkn)->token != STRING && (*tkn)->token != PIPE)
-			(*tkn) = (*tkn)->next;
-		if ((*tkn) && (*tkn)->token == STRING)
-			new->file = strdup((*tkn)->content);
+	t_file	*file;
+	
+	file = malloc(sizeof(t_file));
+	file->next = NULL;
+	file->redir = strdup((*tkn)->content);
+	while ((*tkn) && (*tkn)->token != STRING && (*tkn)->token != PIPE)
 		(*tkn) = (*tkn)->next;
-		while ((*tkn) && (*tkn)->token == SPC)
-			(*tkn) = (*tkn)->next;
-		while ((*tkn) && (*tkn)->token != PIPE)
-			cmd_args(new,tkn);
-	}
+	if ((*tkn) && (*tkn)->token == STRING)
+		file->name = strdup((*tkn)->content);
+	(*tkn) = (*tkn)->next;
+	while ((*tkn) && (*tkn)->token == SPC)
+		(*tkn) = (*tkn)->next;
+	add_file(&new->file, file);
 }
+
 
 t_cmds	*create_cmd(t_token **tkn)
 {
@@ -70,10 +75,7 @@ t_cmds	*create_cmd(t_token **tkn)
 	new->command = strdup((*tkn)->content);
 	(*tkn) = (*tkn)->next;
 	if ((*tkn))
-	{
 		cmd_args(new, tkn);
-		cmd_redir(new, tkn);
-	}
 	if ((*tkn) != NULL)
 		(*tkn) = (*tkn)->next;
 	return (new);

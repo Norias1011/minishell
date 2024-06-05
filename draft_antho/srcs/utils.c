@@ -48,7 +48,6 @@ void	clean_exit(t_minishell *minishell, int exno)
 /* in this function we can add all the malloc that we have to free*/
 void	free_all(t_minishell *minishell)
 {
-	free(minishell->prompt);
 	if (minishell->env_s)
 	{
 		while (minishell->env_s)
@@ -65,8 +64,8 @@ void	free_all(t_minishell *minishell)
 		{
 			free(minishell->cmds->command);
 			free(minishell->cmds->args);
-			free(minishell->cmds->file);
-			free(minishell->cmds->redir);
+			/*free(minishell->cmds->file);
+			free(minishell->cmds->redir);*/
 			minishell->cmds = minishell->cmds->next;
 		}
 		free(minishell->cmds);
@@ -80,6 +79,7 @@ void	free_all(t_minishell *minishell)
 		}
 		free(minishell->token);
 	}
+	free(minishell->prompt);
 }
 
 t_cmds	*get_last_cmd(t_cmds *stash)

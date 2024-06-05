@@ -57,6 +57,13 @@ typedef enum token_lex
 	QUOTE_STRING,
 }					t_token_lex;
 
+typedef	struct	s_file
+{
+	char	*name;
+	char	*redir;
+	struct	s_file	*next;
+}			t_file;
+
 typedef struct s_token
 {
 	char			*content;
@@ -68,8 +75,7 @@ typedef struct s_cmds
 {
 	char			*command;
 	char			*args;
-	char			*file;
-	char			*redir;
+	t_file			*file;
 	struct s_cmds	*next;
 }					t_cmds;
 
@@ -201,6 +207,7 @@ void				erase_space(char *str);
 
 /* utils2.c functions */
 
+void	add_file(t_file **file_list, t_file *new_file);
 void	add_command(t_cmds **cmd_list, t_cmds *new_cmd);
 
 /* command.c functions */
