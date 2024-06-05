@@ -47,12 +47,15 @@ void	cmd_redir(t_cmds *new, t_token **tkn)
 	
 	file = malloc(sizeof(t_file));
 	file->next = NULL;
+	file->name = NULL;
+	file->redir = NULL;
 	file->redir = strdup((*tkn)->content);
 	while ((*tkn) && (*tkn)->token != STRING && (*tkn)->token != PIPE)
 		(*tkn) = (*tkn)->next;
 	if ((*tkn) && (*tkn)->token == STRING)
 		file->name = strdup((*tkn)->content);
-	(*tkn) = (*tkn)->next;
+	if (*tkn)
+		(*tkn) = (*tkn)->next;
 	while ((*tkn) && (*tkn)->token == SPC)
 		(*tkn) = (*tkn)->next;
 	add_file(&new->file, file);
@@ -95,6 +98,7 @@ t_cmds	*token_to_commands(t_token *tkn)
 			return (NULL);
 		add_command(&cmd_list, new);
 	}
+	//free(new);
 	return (cmd_list);
 }
 
