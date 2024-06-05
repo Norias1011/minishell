@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 16:29:37 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 16:36:24 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/05 18:21:22 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ int	exit_built(t_minishell *minishell, t_cmds *cmd_lst)
 
 	code_exit = 0;
 	pipe = pipe_exist(cmd_lst);
-	if (pipe != 1)
-		printf("exit\n");
 	if (cmd_lst->args == NULL)
+		printf("exit\n");
+	if (pipe == 1)
 		code_exit = errno;
 	else
 		code_exit = check_exit(cmd_lst->args);
