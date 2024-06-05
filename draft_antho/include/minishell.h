@@ -157,12 +157,11 @@ t_token				*get_last_token(t_token *stash);
 void				add_token(t_token **token_lst, t_token *new_token);
 t_token_lex			get_symbol(char *symbol);
 int					is_metachar(char c);
+int				is_arrow(t_token *token);
 
 /* token.c functions */
 
-void				add_command(t_cmds **cmd_list, char *command, char *args,
-						char *file, char *redir);
-t_cmds				*token_to_commands(t_token *token_list);
+void				add_command(t_cmds **cmd_list, t_cmds *new);
 int					token_string(char *rl, t_token *new, int i);
 int					token_space(char *rl, t_token *new, int i);
 int					token_symbol(char *rl, t_token *new, int i);
@@ -197,5 +196,17 @@ int					nextsteps(char c, char charset);
 
 int					cd_built(t_minishell *minishell, t_cmds *cmd_lst);
 void				cd_home(t_minishell *minishell);
+
+/* utils2.c functions */
+
+void	add_command(t_cmds **cmd_list, t_cmds *new_cmd);
+
+/* command.c functions */
+
+void	set_cmd_null(t_cmds *new);
+void	cmd_args(t_cmds *new, t_token **tkn);
+void	cmd_redir(t_cmds *new, t_token **tkn);
+t_cmds	*create_cmd(t_token **tkn);
+t_cmds	*token_to_commands(t_token *tkn);
 
 #endif

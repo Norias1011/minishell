@@ -12,6 +12,13 @@
 
 #include "../include/minishell.h"
 
+int	is_arrow(t_token *token)
+{
+	if (token && (token->token == L_ARROW || token->token == R_ARROW || token->token == L_D_ARROW || token->token == R_D_ARROW))
+		return (1);
+	return (0);
+}
+
 t_token	*get_last_token(t_token *stash)
 {
 	if (stash == NULL)

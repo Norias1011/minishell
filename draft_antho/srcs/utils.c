@@ -105,34 +105,3 @@ int	get_arg_size(t_token **liste)
 	}
 	return (size);
 }
-
-char	*get_token_name(t_token_lex token) // pour print les tokens
-{
-	if (token == STRING)
-		return ("STRING");
-	if (token == SYMBOL)
-		return ("SYMBOL");
-	if (token == SPC)
-		return ("SPC");
-	if (token == PIPE)
-		return ("PIPE");
-	if (token == DOLLAR)
-		return ("DOLLAR");
-	if (token == DASH)
-		return ("DASH");
-	if (token == QUOTE)
-		return ("QUOTE");
-	if (token == DOUBLEQUOTE)
-		return ("DOUBLEQUOTE");
-	if (token == L_ARROW)
-		return ("L_ARROW");
-	if (token == R_ARROW)
-		return ("R_ARROW");
-	if (token == QUOTE_STRING)
-		return ("QUOTE_STRING");
-	if (token == L_D_ARROW)
-		return ("L_D_ARROW");
-	if (token == R_D_ARROW)
-		return ("R_D_ARROW");
-	return ("UNKNOW");
-}

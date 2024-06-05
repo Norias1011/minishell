@@ -82,8 +82,6 @@ int	is_builtin(char *cmd)
 {
 	if (strncmp(cmd, "exit", 5) == 0)
 		return (1);
-	if (strncmp(cmd, "env", 4) == 0)
-		return (1);
 	if (strncmp(cmd, "cd", 3) == 0)
 		return (1);
 	if (strncmp(cmd, "export", 7) == 0)
@@ -120,10 +118,10 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	}
 	if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
 	{
-		execute_command(*cmd_lst, env_s, env, minishell);
 		int save_out = dup(STDOUT_FILENO);
 		if ((*cmd_lst)->file)
 			handle_redirection_solo(*cmd_lst, save_out);
+		execute_command(*cmd_lst, env_s, env, minishell);
 		return ;
 	}
 	i = 0;
