@@ -131,7 +131,7 @@ char				*dollar_sign(t_minishell *minishell, char *args);
 /* exec.c functions */
 
 int					count_commands(t_cmds **cmd_lst);
-void				handle_redirection(t_cmds *current_cmd);
+void					handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env, t_minishell *minishell);
 void				pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 						t_minishell *minishell);
 void				execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
@@ -196,6 +196,7 @@ int					nextsteps(char c, char charset);
 
 int					cd_built(t_minishell *minishell, t_cmds *cmd_lst);
 void				cd_home(t_minishell *minishell);
+void				erase_space(char *str);
 
 /* utils2.c functions */
 

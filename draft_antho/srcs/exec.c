@@ -27,55 +27,33 @@ int	count_commands(t_cmds **cmd_lst) // compte le nombre de cmd dans la liste
 	return (i);
 }
 
-void	handle_redirection_solo(t_cmds *current_cmd, int fd)
+void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
+		t_minishell *minishell)
 {
 	int	fd_file;
+	int	out;
 
-	if (strncmp(current_cmd->redir, ">>", 2) == 0)
-	{
-		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		dup2(fd_file, fd);
-		close(fd);
-		close(fd_file);
-	}
-	else if (strncmp(current_cmd->redir, ">", 1) == 0)
-	{
-		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		dup2(fd_file, fd);
-		close(fd);
-		close(fd_file);
-	}
-	else if (strncmp(current_cmd->redir, "<", 1) == 0)
-	{
-		fd_file = open(current_cmd->file, O_RDONLY);
-		dup2(fd_file, fd);
-		close(fd);
-		close(fd_file);
-	}
-}
-
-void	handle_redirection(t_cmds *current_cmd)
-{
-	int	fd_file;
-
+	fd_file = 0;
+	out = dup(STDOUT_FILENO);
+	
 	if (strncmp(current_cmd->redir, ">>", 2) == 0)
 	{
 		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		dup2(fd_file, STDOUT_FILENO);
-		close(fd_file);
 	}
 	else if (strncmp(current_cmd->redir, ">", 1) == 0)
 	{
 		fd_file = open(current_cmd->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		dup2(fd_file, STDOUT_FILENO);
-		close(fd_file);
 	}
 	else if (strncmp(current_cmd->redir, "<", 1) == 0)
 	{
 		fd_file = open(current_cmd->file, O_RDONLY);
 		dup2(fd_file, STDIN_FILENO);
-		close(fd_file);
 	}
+	execute_command(current_cmd, env_s, env, minishell);
+	dup2(out, STDOUT_FILENO);
+	close(fd_file);
 }
 
 int	is_builtin(char *cmd)
@@ -87,6 +65,12 @@ int	is_builtin(char *cmd)
 	if (strncmp(cmd, "export", 7) == 0)
 		return (1);
 	if (strncmp(cmd, "unset", 6) == 0)
+		return (1);
+	if (strncmp(cmd, "env", 4) == 0)
+		return (1);
+	if (strncmp(cmd, "echo", 5) == 0)
+		return (1);
+	if (strncmp(cmd, "pwd", 5) == 0)
 		return (1);
 	return (0);
 }
@@ -118,10 +102,10 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	}
 	if (nbr_cmd == 1 && is_builtin((*cmd_lst)->command) == 1)
 	{
-		int save_out = dup(STDOUT_FILENO);
 		if ((*cmd_lst)->file)
-			handle_redirection_solo(*cmd_lst, save_out);
-		execute_command(*cmd_lst, env_s, env, minishell);
+			handle_redirection(*cmd_lst, env_s, env, minishell);
+		else
+			execute_command(*cmd_lst, env_s, env, minishell);
 		return ;
 	}
 	i = 0;
@@ -139,8 +123,10 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 		else if (pid[i] == 0)
 		{
 			if ((*cmd_lst)->file)
-				// check de >> si y a on ecris dans le fichier le resultat
-				handle_redirection(*cmd_lst);
+			{
+				handle_redirection(*cmd_lst, env_s, env, minishell);
+				exit(EXIT_SUCCESS);
+			}
 			if (i == 0 && nbr_cmd > 1) // premier process
 			{
 				dup2(fd[i][1], STDOUT_FILENO);
