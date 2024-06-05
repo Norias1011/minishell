@@ -32,9 +32,11 @@ void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
 {
 	int	fd_file;
 	int	out;
+	int	in;
 
 	fd_file = 0;
 	out = dup(STDOUT_FILENO);
+	in = dup(STDIN_FILENO);
 	
 	if (strncmp(current_cmd->redir, ">>", 2) == 0)
 	{
@@ -53,7 +55,10 @@ void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
 	}
 	execute_command(current_cmd, env_s, env, minishell);
 	dup2(out, STDOUT_FILENO);
+	dup2(in, STDIN_FILENO);
 	close(fd_file);
+	close(out);
+	close(in);
 }
 
 int	is_builtin(char *cmd)
