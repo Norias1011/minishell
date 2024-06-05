@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 13:25:39 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/05 17:12:16 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/06 00:47:27 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,12 @@ typedef enum token_lex
 	QUOTE_STRING,
 }						t_token_lex;
 
-typedef	struct	s_file
+typedef struct s_file
 {
-	char	*name;
-	char	*redir;
-	struct	s_file	*next;
-}			t_file;
+	char				*name;
+	char				*redir;
+	struct s_file		*next;
+}						t_file;
 
 typedef struct s_token
 {
@@ -73,12 +73,11 @@ typedef struct s_token
 
 typedef struct s_cmds
 {
-	char			*command;
-	char			*args;
-	t_file			*file;
-	struct s_cmds	*next;
-}					t_cmds;
-
+	char				*command;
+	char				*args;
+	t_file				*file;
+	struct s_cmds		*next;
+}						t_cmds;
 
 typedef struct s_env
 {
@@ -89,7 +88,7 @@ typedef struct s_env
 
 typedef struct s_garbage
 {
-	char				*value;
+	void				*value;
 	struct s_garbage	*next;
 }						t_garbage;
 
@@ -101,6 +100,7 @@ typedef struct s_minishell
 	char				**env;
 	t_cmds				*cmds;
 	t_garbage			*garbage;
+	t_file				*file;
 }						t_minishell;
 
 /* main.c functions */
@@ -116,8 +116,7 @@ char					*get_token_name(t_token_lex token);
 
 /* init_all.c functions */
 
-int						init_mini_shell(t_minishell *minishell, char **env,
-							t_garbage *garbage);
+int						init_mini_shell(t_minishell *minishell, char **env);
 int						init_env(t_minishell *minishell, char **env);
 char					*get_env_value(t_minishell *minishell, char *key);
 char					*get_pwd(t_minishell *minishell);
@@ -127,9 +126,9 @@ int						init_cd(t_minishell *minishell);
 int						env_exist(t_minishell *minishell, char *key);
 int						add_env(t_minishell *minishell, char *key, char *value);
 void					remove_env(t_minishell *minishell, char *key);
-int						init_garbage(t_garbage *garbage,
+int						init_garbage(t_garbage **garbage,
 							t_minishell *minishell);
-void					add_garbage(t_garbage *garbage, char *value);
+void					add_garbage(t_garbage **garbage, void *value);
 
 /* signal.c functions */
 
@@ -220,10 +219,9 @@ void					erase_space(char *str);
 
 /* utils2.c functions */
 
-void	add_file(t_file **file_list, t_file *new_file);
-void	add_command(t_cmds **cmd_list, t_cmds *new_cmd);
+void					add_file(t_file **file_list, t_file *new_file);
 void					add_command(t_cmds **cmd_list, t_cmds *new_cmd);
-
+void					add_command(t_cmds **cmd_list, t_cmds *new_cmd);
 
 /* command.c functions */
 
@@ -242,5 +240,7 @@ void					free_cmds(t_cmds *cmds);
 void					free_token(t_token *token);
 void					free_env(t_env *env);
 void					free_garbage(t_garbage *garbage);
+void					free_file(t_file *file);
+// int						is_char_double_pointer(void *value);
 
 #endif

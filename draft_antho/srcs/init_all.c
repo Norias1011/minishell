@@ -6,14 +6,17 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/05 17:12:21 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/06 00:50:36 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	init_mini_shell(t_minishell *minishell, char **env, t_garbage *garbage)
+int	init_mini_shell(t_minishell *minishell, char **env)
 {
+	t_garbage	*garbage;
+
+	garbage = NULL;
 	ft_memset(minishell, 0, sizeof(t_minishell));
 	if (!init_env(minishell, env))
 	{
@@ -25,7 +28,7 @@ int	init_mini_shell(t_minishell *minishell, char **env, t_garbage *garbage)
 		printf("Error: init_cd failed\n");
 		return (0);
 	}
-	if (!init_garbage(garbage, minishell))
+	if (!init_garbage(&garbage, minishell))
 	{
 		printf("Error: init_garbage failed\n");
 		return (0);
@@ -202,36 +205,25 @@ void	remove_env(t_minishell *minishell, char *key)
 	}
 }
 
-int	init_garbage(t_garbage *garbage, t_minishell *minishell)
+int	init_garbage(t_garbage **garbage, t_minishell *minishell)
 {
-	garbage = (t_garbage *)malloc(sizeof(t_garbage));
-	if (!garbage)
+	*garbage = (t_garbage *)malloc(sizeof(t_garbage));
+	if (!*garbage)
 		return (0);
-	garbage->value = NULL;
-	garbage->next = NULL;
-	minishell->garbage = garbage;
+	(*garbage)->value = NULL;
+	(*garbage)->next = NULL;
+	minishell->garbage = *garbage;
 	return (1);
 }
 
-void	add_garbage(t_garbage *garbage, char *value)
+void	add_garbage(t_garbage **garbage, void *value)
 {
-	t_garbage	*new_garbage;
-	t_garbage	*tmp;
+	t_garbage	*new_node;
 
-	if (value == NULL)
+	new_node = (t_garbage *)malloc(sizeof(t_garbage));
+	if (!new_node)
 		return ;
-	new_garbage = (t_garbage *)malloc(sizeof(t_garbage));
-	if (!new_garbage)
-		return ;
-	new_garbage->value = ft_strdup(value);
-	new_garbage->next = NULL;
-	if (!garbage)
-		garbage = new_garbage;
-	else
-	{
-		tmp = garbage;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new_garbage;
-	}
+	new_node->value = value;
+	new_node->next = *garbage;
+	*garbage = new_node;
 }

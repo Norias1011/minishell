@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 16:08:13 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/05 17:00:40 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/06 01:05:30 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ void	free_all(t_minishell *minishell)
 		free_token(minishell->token);
 	if (minishell->env_s)
 		free_env(minishell->env_s);
-	if (minishell->garbage)
-		free_garbage(minishell->garbage);
+	free_garbage(minishell->garbage);
+	if (minishell->env)
+		free(minishell->env);
 }
 
 void	free_cmd(t_cmds *cmd)
@@ -86,14 +87,74 @@ void	free_env(t_env *env)
 
 void	free_garbage(t_garbage *garbage)
 {
-	t_garbage *tmp;
+	t_garbage	*tmp;
+
+	while (garbage != NULL)
+	{
+		tmp = garbage;
+		if (garbage->value)
+			free(garbage->value);
+		garbage = garbage->next;
+		free(tmp);
+	}
+}
+
+void	free_file(t_file *file)
+{
+	t_file	*tmp;
+
+	while (file)
+	{
+		tmp = file;
+		file = file->next;
+		if (tmp->name)
+			free(tmp->name);
+		if (tmp->redir)
+			free(tmp->redir);
+		free(tmp);
+	}
+}
+
+/*int	is_char_double_pointer(void *value)
+{
+	char	**values;
+	int		i;
+
+	values = (char **)value;
+	i = 0;
+	while (values[i])
+	{
+		i++;
+	}
+	if (i > 0)
+		return (1);
+	return (0);
+}*/
+
+/*void	free_garbage(t_garbage *garbage)
+{
+	t_garbage	*tmp;
+	char		**values;
+	int			i;
 
 	while (garbage)
 	{
 		tmp = garbage;
 		garbage = garbage->next;
 		if (tmp->value)
+		{
+			if (is_char_double_pointer(tmp->value))
+			{
+				values = (char **)tmp->value;
+				i = 0;
+				while (values[i])
+				{
+					free(values[i]);
+					i++;
+				}
+			}
 			free(tmp->value);
+		}
 		free(tmp);
 	}
-}
+}*/
