@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:08:08 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 17:17:08 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/05 16:45:48 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 int	main(int argc, char *argv[], char **env)
 {
 	t_minishell	minishell;
+	t_garbage	garbage;
 
 	(void)argc, (void)argv;
-	if (init_mini_shell(&minishell, env) == -1)
+	if (init_mini_shell(&minishell, env, &garbage) == -1)
 		clean_exit(&minishell, EXIT_FAILURE);
 	minishell_loop(&minishell);
 	return (0);

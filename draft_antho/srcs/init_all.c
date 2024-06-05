@@ -6,13 +6,13 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:57:47 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 16:43:37 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/05 17:12:21 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	init_mini_shell(t_minishell *minishell, char **env)
+int	init_mini_shell(t_minishell *minishell, char **env, t_garbage *garbage)
 {
 	ft_memset(minishell, 0, sizeof(t_minishell));
 	if (!init_env(minishell, env))
@@ -23,6 +23,11 @@ int	init_mini_shell(t_minishell *minishell, char **env)
 	if (!init_cd(minishell))
 	{
 		printf("Error: init_cd failed\n");
+		return (0);
+	}
+	if (!init_garbage(garbage, minishell))
+	{
+		printf("Error: init_garbage failed\n");
 		return (0);
 	}
 	minishell->prompt = NULL;
@@ -84,9 +89,12 @@ char	*get_pwd(t_minishell *minishell)
 	logname = get_env_value(minishell, "LOGNAME");
 	tmp = ft_strjoin(logname, ":");
 	logname_color = ft_strjoin(CYAN, tmp);
+	free(tmp);
 	pwd = get_env_value(minishell, "PWD");
 	pwd = ft_strjoin(MAGENTA, pwd);
 	final_prompt = ft_strjoin(logname_color, pwd);
+	free(logname_color);
+	free(pwd);
 	final_prompt = ft_strjoin(final_prompt, DEFAULT);
 	final_prompt = ft_strjoin(final_prompt, "$ ");
 	return (final_prompt);
@@ -190,5 +198,39 @@ void	remove_env(t_minishell *minishell, char *key)
 		}
 		prev = tmp;
 		tmp = tmp->next;
+	}
+}
+
+int	init_garbage(t_garbage *garbage, t_minishell *minishell)
+{
+	garbage = (t_garbage *)malloc(sizeof(t_garbage));
+	if (!garbage)
+		return (0);
+	garbage->value = NULL;
+	garbage->next = NULL;
+	minishell->garbage = garbage;
+	return (1);
+}
+
+void	add_garbage(t_garbage *garbage, char *value)
+{
+	t_garbage	*new_garbage;
+	t_garbage	*tmp;
+
+	if (value == NULL)
+		return ;
+	new_garbage = (t_garbage *)malloc(sizeof(t_garbage));
+	if (!new_garbage)
+		return ;
+	new_garbage->value = ft_strdup(value);
+	new_garbage->next = NULL;
+	if (!garbage)
+		garbage = new_garbage;
+	else
+	{
+		tmp = garbage;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new_garbage;
 	}
 }
