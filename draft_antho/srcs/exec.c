@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:42:32 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 16:43:44 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/05 16:55:23 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
 	in = dup(STDIN_FILENO);
 	
 	while (current_cmd->file)
+	if (strncmp(current_cmd->redir, ">>", 2) == 0)
 	{
 		if (strncmp(current_cmd->file->redir, ">>", 2) == 0)
 		{
@@ -190,7 +191,7 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 	char **paths;
 	int i;
 
-	paths = split_paths(cmd_lst, env_s);
+	paths = split_paths(cmd_lst, env_s, minishell);
 	// split tous les path possibles en tableau avec le nom de la commande a la fin
 	args = ft_split(ft_strjoin(cmd_lst->command, cmd_lst->args), ' ');
 	// split tous les arguments dans un tableau d'arguments

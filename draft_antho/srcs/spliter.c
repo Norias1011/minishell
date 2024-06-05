@@ -6,13 +6,14 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:36:00 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 16:48:22 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/05 16:58:43 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-char	**split_paths(t_cmds *cmd, t_env *env) // split les paths
+char	**split_paths(t_cmds *cmd, t_env *env, t_minishell *minishell)
+// split les paths
 {
 	t_env *current;
 	char **paths;
@@ -37,7 +38,9 @@ char	**split_paths(t_cmds *cmd, t_env *env) // split les paths
 		while (paths[i])
 		{
 			result[i] = ft_strjoin(paths[i], "/");
+			add_garbage(minishell->garbage, result[i]);
 			result[i] = ft_strjoin(result[i], cmd->command);
+			add_garbage(minishell->garbage, result[i]);
 			free(paths[i]);
 			i++;
 		}

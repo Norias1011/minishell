@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:03:28 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/04 11:50:43 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/06/05 16:45:01 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,31 @@ void	print_prompt(void)
 	printf("\t\t\t\t\t\t\t%sMINISHELL BY%s\n\n", CYAN, DEFAULT);
 	printf("\t\t\t\t\t\t\t%sAJEANDEL & AKINZELIN%s\n\n", MAGENTA, DEFAULT);
 }
-/* function that we will call when we will need to clean the exit of the program*/
+
+t_cmds	*get_last_cmd(t_cmds *stash)
+{
+	if (stash == NULL)
+		return (NULL);
+	while (stash->next)
+		stash = stash->next;
+	return (stash);
+}
+
+int	get_arg_size(t_token **liste)
+{
+	int		size;
+	t_token	*current;
+
+	current = *liste;
+	size = 0;
+	while (current && current->token != PIPE)
+	{
+		size += ft_strlen(current->content);
+		current = current->next;
+	}
+	return (size);
+}
+
 void	clean_exit(t_minishell *minishell, int exno)
 {
 	if (minishell)
@@ -45,7 +69,7 @@ void	clean_exit(t_minishell *minishell, int exno)
 	}
 	exit(exno);
 }
-/* in this function we can add all the malloc that we have to free*/
+
 void	free_all(t_minishell *minishell)
 {
 	if (minishell->env_s)
@@ -80,28 +104,4 @@ void	free_all(t_minishell *minishell)
 		free(minishell->token);
 	}
 	free(minishell->prompt);
-}
-
-t_cmds	*get_last_cmd(t_cmds *stash)
-{
-	if (stash == NULL)
-		return (NULL);
-	while (stash->next)
-		stash = stash->next;
-	return (stash);
-}
-
-int	get_arg_size(t_token **liste)
-{
-	int		size;
-	t_token	*current;
-
-	current = *liste;
-	size = 0;
-	while (current && current->token != PIPE)
-	{
-		size += ft_strlen(current->content);
-		current = current->next;
-	}
-	return (size);
 }
