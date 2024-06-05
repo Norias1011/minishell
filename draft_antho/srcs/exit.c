@@ -33,12 +33,8 @@ int	exit_built(t_minishell *minishell, t_cmds *cmd_lst)
 
 int	pipe_exist(t_cmds *cmd_lst)
 {
-	while (cmd_lst)
-	{
-		if (cmd_lst->redir != NULL && (strncmp(cmd_lst->redir, "|", 1) == 0))
-			return (1);
-		cmd_lst = cmd_lst->next;
-	}
+	if (cmd_lst && cmd_lst->next)
+		return (1);
 	return (0);
 }
 

@@ -39,7 +39,6 @@ void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
 	in = dup(STDIN_FILENO);
 	
 	while (current_cmd->file)
-	if (strncmp(current_cmd->redir, ">>", 2) == 0)
 	{
 		if (strncmp(current_cmd->file->redir, ">>", 2) == 0)
 		{
