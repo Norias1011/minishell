@@ -23,22 +23,16 @@ void	set_cmd_null(t_cmds *new)
 
 void	cmd_args(t_cmds *new, t_token **tkn)
 {
-	int arg_size;
 	char *tmp;
 	
 	tmp = NULL;
-	arg_size = get_arg_size(tkn);
-	new->args = malloc(sizeof(char) * (arg_size + 1));
-	if (new->args == NULL)
-		return ;
-	new->args[0] = '\0';
 	while ((*tkn) && (*tkn)->token != PIPE && !is_arrow(*tkn))
 	{
-		tmp = ft_strjoin(new->args, (*tkn)->content);
-		if (tmp == NULL)
-			return;
-		free(new->args);
-		new->args = tmp;
+		tmp = ft_strdup((*tkn)->content);
+		if (new->args == NULL)
+			new->args = tmp;
+		else
+			new->args = ft_strjoin(new->args, tmp);
 		(*tkn) = (*tkn)->next;
 	}
 }
@@ -52,8 +46,11 @@ void	cmd_redir(t_cmds *new, t_token **tkn)
 			(*tkn) = (*tkn)->next;
 		if ((*tkn) && (*tkn)->token == STRING)
 			new->file = strdup((*tkn)->content);
-		while ((*tkn) && (*tkn)->token != PIPE)
+		(*tkn) = (*tkn)->next;
+		while ((*tkn) && (*tkn)->token == SPC)
 			(*tkn) = (*tkn)->next;
+		while ((*tkn) && (*tkn)->token != PIPE)
+			cmd_args(new,tkn);
 	}
 }
 
@@ -87,8 +84,8 @@ t_cmds	*token_to_commands(t_token *tkn)
 	t_cmds *cmd_list;
 	t_cmds *new;
 	
-	cmd_list = NULL;
 	new = NULL;
+	cmd_list = NULL;
 	while (tkn)
 	{
 		new = create_cmd(&tkn);

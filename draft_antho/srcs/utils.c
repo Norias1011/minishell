@@ -55,9 +55,9 @@ void	free_all(t_minishell *minishell)
 		{
 			free(minishell->env_s->key);
 			free(minishell->env_s->value);
-			free(minishell->env_s);
 			minishell->env_s = minishell->env_s->next;
 		}
+		free(minishell->env_s);
 	}
 	if (minishell->cmds)
 	{
@@ -67,18 +67,18 @@ void	free_all(t_minishell *minishell)
 			free(minishell->cmds->args);
 			free(minishell->cmds->file);
 			free(minishell->cmds->redir);
-			free(minishell->cmds);
 			minishell->cmds = minishell->cmds->next;
 		}
+		free(minishell->cmds);
 	}
 	if (minishell->token)
 	{
 		while (minishell->token)
 		{
 			free(minishell->token->content);
-			free(minishell->token);
 			minishell->token = minishell->token->next;
 		}
+		free(minishell->token);
 	}
 }
 
