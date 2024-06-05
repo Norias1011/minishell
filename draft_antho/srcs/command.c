@@ -23,6 +23,7 @@ void	set_cmd_null(t_cmds *new)
 void	cmd_args(t_cmds *new, t_token **tkn)
 {
 	char *tmp;
+	char *arg;
 	
 	tmp = NULL;
 	while (*tkn && (*tkn)->token != PIPE)
@@ -33,7 +34,12 @@ void	cmd_args(t_cmds *new, t_token **tkn)
 			if (new->args == NULL)
 				new->args = tmp;
 			else
-				new->args = ft_strjoin(new->args, tmp);
+			{
+				arg = new->args;
+				new->args = ft_strjoin(arg, tmp);
+				free(arg);
+				free(tmp);
+			}
 			(*tkn) = (*tkn)->next;
 		}
 		if ((*tkn) && is_arrow(*tkn))
@@ -64,17 +70,15 @@ void	cmd_redir(t_cmds *new, t_token **tkn)
 
 t_cmds	*create_cmd(t_token **tkn)
 {
-	t_cmds *new = malloc(sizeof(t_cmds));
+	t_cmds *new;
+	new = malloc(sizeof(t_cmds));
 	if (new == NULL)
 		return (NULL);
 	set_cmd_null(new);
 	while ((*tkn) && (*tkn)->token == SPC)
 		(*tkn) = (*tkn)->next;
 	if ((*tkn) == NULL)
-	{
-		free(new);
 		return (NULL);
-	}
 	new->command = strdup((*tkn)->content);
 	(*tkn) = (*tkn)->next;
 	if ((*tkn))
@@ -83,6 +87,13 @@ t_cmds	*create_cmd(t_token **tkn)
 		(*tkn) = (*tkn)->next;
 	return (new);
 }
+/*void	free_new(t_cmds *new)
+{
+	if (new->command)
+		free(new->command);
+	if (new->args)
+		free(new->args);
+}*/
 
 t_cmds	*token_to_commands(t_token *tkn)
 {
@@ -98,7 +109,7 @@ t_cmds	*token_to_commands(t_token *tkn)
 			return (NULL);
 		add_command(&cmd_list, new);
 	}
-	//free(new);
 	return (cmd_list);
 }
+
 

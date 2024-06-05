@@ -241,5 +241,6 @@ void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 			continue ;
 		}
 		add_token(token_lst, new);
+		//free(new);
 	}
 }

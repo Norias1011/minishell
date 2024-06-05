@@ -136,6 +136,7 @@ int	init_cd(t_minishell *minishell)
 		return (0);
 	}
 	set_env_value(minishell, "PWD", oldpwd);
+	free(oldpwd);
 	return (1);
 }
 

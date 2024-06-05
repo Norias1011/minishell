@@ -37,12 +37,6 @@ int	token_space(char *rl, t_token *new, int i)
 	j = 0;
 	while (rl[i + j] == ' ')
 		j++;
-	new->content = malloc(sizeof(char) * (1));
-	if (!new->content)
-	{
-		free(new);
-		return (0);
-	}
 	new->content = ft_strdup(" ");
 	new->token = SPC;
 	return (j);

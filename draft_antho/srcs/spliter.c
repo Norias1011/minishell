@@ -13,7 +13,6 @@
 #include "../include/minishell.h"
 
 char	**split_paths(t_cmds *cmd, t_env *env, t_minishell *minishell)
-// split les paths
 {
 	t_env *current;
 	char **paths;
@@ -25,7 +24,6 @@ char	**split_paths(t_cmds *cmd, t_env *env, t_minishell *minishell)
 	i = 0;
 	current = env;
 	while (current && strncmp(current->key, "PATH", 4) != 0)
-		// vas chercher la value a la key path
 		current = current->next;
 	if (current)
 		paths = ft_split(current->value, ':');

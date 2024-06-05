@@ -190,16 +190,16 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 
 void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 		t_minishell *minishell)
-// execute les commandes en checkant si elle est dans les builtins avant
 {
-	char **args;
-	char **paths;
-	int i;
+	char	**args;
+	char	**paths;
+	char	*tmp;
+	int		i;
 
 	paths = split_paths(cmd_lst, env_s, minishell);
-	// split tous les path possibles en tableau avec le nom de la commande a la fin
-	args = ft_split(ft_strjoin(cmd_lst->command, cmd_lst->args), ' ');
-	// split tous les arguments dans un tableau d'arguments
+	tmp = ft_strjoin(cmd_lst->command, cmd_lst->args);
+	args = ft_split(tmp, ' ');
+	free(tmp);
 	i = 0;
 	if (strncmp(cmd_lst->command, "exit", 4) == 0)
 		exit_built(minishell, cmd_lst);
@@ -232,6 +232,12 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 	while (paths && paths[i]) // free tout
 	{
 		free(paths[i]);
+		i++;
+	}
+	i = 0;
+	while (args && args[i]) // free tout
+	{
+		free(args[i]);
 		i++;
 	}
 	free(paths);
