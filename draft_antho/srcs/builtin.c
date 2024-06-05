@@ -24,7 +24,7 @@ void	echo(t_cmds *cmd_lst)
 		printf("\n");
 		return ;
 	}
-	while (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == ' ')
+	if (cmd_lst->args[i] != '\0' && cmd_lst->args[i] == ' ')
 		i++;
 	if (((cmd_lst->args[i] != '\0') && (strncmp(cmd_lst->args + i, "-n",
 					3) == 0)) && ((cmd_lst->args[i + 2] == ' ')

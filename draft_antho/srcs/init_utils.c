@@ -12,14 +12,14 @@
 
 #include "../include/minishell.h"
 
-int	quote_handler(char *rl, t_token *new, int i)
+int	quote_handler(t_minishell *minishell, char *rl, t_token *new, int i)
 {
 	int	j;
 
 	j = 0;
 	while (rl[i + j] && rl[i + j] != rl[i - 1])
 		j++;
-	if (i + j == ft_strlen(rl) && rl[i + j] != rl[i - 1])
+	if ((i + j == ft_strlen(rl)) && (rl[i + j] != rl[i - 1]))
 		return (-1);
 	new->content = malloc(sizeof(char) * (j + 1));
 	if (!new->content)
@@ -36,7 +36,8 @@ int	quote_handler(char *rl, t_token *new, int i)
 	else
 	{
 		ft_strlcpy(new->content, rl + i, j + 1);
-		new->token = QUOTE_STRING;
+		if (new->token == DOUBLEQUOTE)
+			new->content = dollar_quote(minishell, new->content);
 	}
 	return (j);
 }
@@ -229,11 +230,10 @@ void	token(t_minishell *minishell, char *rl, t_token **token_lst)
 		}
 		if ((new->token == QUOTE || new->token == DOUBLEQUOTE))
 		{
-			add = quote_handler(rl, new, i);
+			add = quote_handler(minishell, rl, new, i);
 			if (add != -1)
 			{
 				i += add + 1;
-				new->content = dollar_quote(minishell, new->content);
 				add_token(token_lst, new);
 			}
 			else
