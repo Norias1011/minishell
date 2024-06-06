@@ -101,6 +101,7 @@ typedef struct s_minishell
 	t_cmds				*cmds;
 	t_garbage			*garbage;
 	t_file				*file;
+	int				error;
 }						t_minishell;
 
 /* main.c functions */

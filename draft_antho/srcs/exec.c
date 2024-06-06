@@ -27,6 +27,32 @@ int	count_commands(t_cmds **cmd_lst) // compte le nombre de cmd dans la liste
 	return (i);
 }
 
+void	heredoc(t_cmds *command, int fd)
+{
+	char *line = NULL;
+	
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+			break ;
+		if (strcmp(line, command->file->name) == 0)
+			break ;
+		if (write(fd, line, strlen(line)) == -1)
+		{
+			perror("write");
+			break;
+		}
+		if (write(fd, "\n", 1) == -1)
+		{
+			perror("write");
+			break;
+		}
+		free(line);
+	}
+	free(line);
+}
+
 void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
 		t_minishell *minishell)
 {
@@ -40,26 +66,37 @@ void	handle_redirection(t_cmds *current_cmd, t_env *env_s, char **env,
 	
 	while (current_cmd->file)
 	{
-		if (strncmp(current_cmd->file->redir, ">>", 2) == 0)
+		if (strncmp(current_cmd->file->redir, ">>", 3) == 0)
 		{
 			if (current_cmd->file->name == NULL)
 				return ;
 			fd_file = open(current_cmd->file->name, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			dup2(fd_file, STDOUT_FILENO);
 		}
-		else if (strncmp(current_cmd->file->redir, ">", 1) == 0)
+		else if (strncmp(current_cmd->file->redir, ">", 2) == 0)
 		{
 			if (!current_cmd->file->name)
 				return ;
 			fd_file = open(current_cmd->file->name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			dup2(fd_file, STDOUT_FILENO);
 		}
-		else if (strncmp(current_cmd->file->redir, "<", 1) == 0)
+		else if (strncmp(current_cmd->file->redir, "<", 2) == 0)
 		{
 			if (current_cmd->file->name == NULL)
 				return ;
 			fd_file = open(current_cmd->file->name, O_RDONLY);
 			dup2(fd_file, STDIN_FILENO);
+		}
+		else if (strncmp(current_cmd->file->redir, "<<", 3) == 0)
+		{
+			if (current_cmd->file->name == NULL)
+				return ;
+			fd_file = open("temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			heredoc(current_cmd, fd_file);
+			close(fd_file);
+			fd_file = open("temp.txt", O_RDONLY);
+			dup2(fd_file, STDIN_FILENO);
+			unlink("temp.txt");
 		}
 		current_cmd->file = current_cmd->file->next;
 	}
@@ -105,6 +142,7 @@ void	pipe_pipe(t_cmds **cmd_lst, t_env *env_s, char **env,
 	if (!pid)
 	{
 		perror("malloc");
+		minishell->error = errno;
 		exit(EXIT_FAILURE);
 	}
 	fd = malloc((nbr_cmd) * sizeof(*fd));
@@ -196,10 +234,6 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 	char	*tmp;
 	int		i;
 
-	paths = split_paths(cmd_lst, env_s, minishell);
-	tmp = ft_strjoin(cmd_lst->command, cmd_lst->args);
-	args = ft_split(tmp, ' ');
-	free(tmp);
 	i = 0;
 	if (strncmp(cmd_lst->command, "exit", 4) == 0)
 		exit_built(minishell, cmd_lst);
@@ -217,6 +251,10 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 		unset_built(minishell, cmd_lst);
 	else
 	{
+		paths = split_paths(cmd_lst, env_s, minishell);
+		tmp = ft_strjoin(cmd_lst->command, cmd_lst->args);
+		args = ft_split(tmp, ' ');
+		free(tmp);
 		while (paths[i])
 		{
 			if (execve(paths[i], args, env) != -1) // execute
@@ -228,18 +266,4 @@ void	execute_command(t_cmds *cmd_lst, t_env *env_s, char **env,
 		perror(cmd_lst->command);
 		exit(-1);
 	}
-	i = 0;
-	while (paths && paths[i]) // free tout
-	{
-		free(paths[i]);
-		i++;
-	}
-	i = 0;
-	while (args && args[i]) // free tout
-	{
-		free(args[i]);
-		i++;
-	}
-	free(paths);
-	free(args);
 }
