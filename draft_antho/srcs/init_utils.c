@@ -124,11 +124,19 @@ char	*dollar_quote(t_minishell *minishell, char *str)
 		{
 			if (str[i + 1] == '?')
 			{
-				ft_strlcpy(string + i, ft_itoa(minishell->error), ft_strlen(ft_itoa(minishell->error)));
+				word = malloc(sizeof(char) * ft_strlen(ft_itoa(minishell->error) + 1));
+				ft_strlcpy(word, ft_itoa(minishell->error), ft_strlen(ft_itoa(minishell->error)) + 1);
 				i += 2;
+				while (word[j])
+				{
+					string[x] = word[j];
+					x++;
+					j++;
+				}
 				continue ;
 			}
 			i++;
+			j = 0;
 			while (str[i + j] && (ft_isalpha(str[i + j]) || ft_isdigit(str[i
 						+ j])))
 					j++;
