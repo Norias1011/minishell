@@ -3,43 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 15:46:20 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/20 17:33:39 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/19 15:50:20 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/23 12:03:54 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
+
 #include "libft.h"
 
-void	*ft_memcpy(void *dest, const void *src, unsigned int n)
+void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	char			*d;
-	char			*s;
 	unsigned int	i;
+	const char		*c;
+	char			*d;
 
-	s = (char *)src;
-	d = (char *)dest;
+	c = src;
+	d = dest;
 	i = 0;
-	if (src == NULL && dest == NULL)
-		return (NULL);
+	if (!dest && !src)
+		return (0);
 	while (i < n)
 	{
-		d[i] = s[i];
+		d[i] = c[i];
 		i++;
 	}
-	return (d);
+	return (dest);
 }
-
-/*int main()
-{
-    char str[50] = "GeeksForGeeks is for programming geeks.";
-    char str2[10] = "test";
-    printf("\nBefore memset(): %s\n", str);
-
-    // Fill 8 characters starting from str[13] with '.'
-    ft_memcpy(str + 13, str2, 4*sizeof(char));
-
-    printf("After memset():  %s", str);
-    return 0;
-}*/

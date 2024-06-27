@@ -3,47 +3,51 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/20 13:15:11 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/20 15:56:40 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/21 11:02:00 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/11 15:55:04 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdlib.h>
-#include<stdio.h>
+
 #include "libft.h"
-//#include<string.h>
 
-char	*ft_strdup(const char *src)
+char	*ft_strdup(const char *s, t_garbage **gc)
 {
-	char	*str;
-	int		len;
-	int		i;
+	size_t	s_len;
+	char	*dest;
 
-	len = 0;
-	i = 0;
-	while (src[len])
-		len++;
-	str = (char *)malloc(sizeof(char) * (len + 1));
-	if (str == NULL)
+	s_len = ft_strlen(s) + 1;
+	dest = g_malloc(gc, s_len);
+	if (dest == NULL)
 		return (NULL);
-	while (i < len)
-	{
-		str[i] = src[i];
-		i++;
-	}
-	str[i] = '\0';
-	return (str);
+	ft_strlcpy(dest, s, s_len);
+	return (dest);
 }
 
-/*int main()
+/*char	*ft_strdup(const char *s, t_garbage **gc)
 {
-    char source[] = "GeeksForGeeks";
- 
-    // A copy of source is created dynamically
-    // and pointer to copy is returned.
-    char* target = ft_strdup(source); 
- 
-    printf("%s", target);
-    return 0;
+	char	*c;
+	char	*d;
+	size_t	i;
+
+	d = (char *)s;
+	i = 0;
+	while (d[i] != '\0')
+	{
+		i++;
+	}
+	c = g_malloc(gc, (i + 1) * sizeof(char));
+	if (c == 0)
+	{
+		return (c);
+	}
+	i = 0;
+	while (d[i] != '\0')
+	{
+		c[i] = d[i];
+		i++;
+	}
+	c[i] = '\0';
+	return (c);
 }*/

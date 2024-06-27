@@ -3,37 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 15:16:45 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/19 16:06:29 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/19 15:20:19 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/23 12:03:29 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
+
 #include "libft.h"
 
-void	ft_bzero(void *str, unsigned int n)
+void	ft_bzero(void *s, size_t n)
 {
-	char			*d;
-	unsigned int	i;
+	char	*c;
+	size_t	i;
 
-	d = str;
+	c = s;
 	i = 0;
 	while (i < n)
 	{
-		d[i] = '\0';
+		c[i] = '\0';
 		i++;
 	}
 }
-
-/*int main()
-{
-    char str[50] = "GeeksForGeeks is for programming geeks.";
-    printf("\nBefore memset(): %s\n", str);
-
-    // Fill 8 characters starting from str[13] with '.'
-    ft_bzero(str + 13, 8*sizeof(char));
-
-    printf("After memset():  %s", str);
-    return 0;
-}*/

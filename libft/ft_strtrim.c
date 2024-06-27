@@ -3,77 +3,79 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 11:22:01 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/22 10:38:39 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/22 14:12:46 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:33:55 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdlib.h>
-#include<stdio.h>
+
 #include "libft.h"
 
-int	isset(char const c, char const *set)
+int	check_set(char str, char const *set)
 {
 	int	i;
 
 	i = 0;
-	while (set[i])
+	while (set[i] != '\0')
 	{
-		if (set[i] == c)
+		if (set[i] == str)
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int	cutstart(char const *s1, char const *set)
+int	first_position(char const *str, char const *set)
 {
 	int	i;
+	int	count;
 
 	i = 0;
-	while (isset(s1[i], set) == 1)
-		i++;
-	return (i);
-}
-
-int	cutend(char const *s1, char const *set)
-{
-	int	i;
-	int	len;
-
-	len = 0;
-	i = 0;
-	while (s1[len])
-		len++;
-	len--;
-	while (isset(s1[len - i], set) == 1)
-		i++;
-	return (i);
-}
-
-char	*ft_strtrim(char const *s1, char const *set)
-{
-	int		len;
-	int		i;
-	char	*res;
-
-	i = 0;
-	if (set == NULL)
-		return ((char *)s1);
-	if (s1 == NULL || ((ft_strlen(s1) == 1) && isset(s1[0], set)))
-		return (NULL);
-	len = ft_strlen(s1) - (cutstart(s1, set) + cutend(s1, set));
-	if (cutstart(s1, set) == ft_strlen(s1))
-		return (ft_strdup(""));
-	res = (char *)malloc(sizeof(char) * len + 1);
-	if (res == NULL)
-		return (NULL);
-	while (i < len)
+	count = 0;
+	while (check_set(str[i], set) == 1)
 	{
-		res[i] = s1[cutstart(s1, set) + i];
+		count++;
 		i++;
 	}
-	res[i] = '\0';
-	return (res);
+	return (count);
+}
+
+int	last_position(char const *str, char const *set)
+{
+	int	i;
+
+	i = ft_strlen(str) - 1;
+	while (check_set(str[i], set) == 1)
+	{
+		i--;
+	}
+	return (i + 1);
+}
+
+char	*ft_strtrim(char const *s1, char const *set, t_garbage **gc)
+{
+	char	*trim;
+	int		i;
+	int		len;
+	int		start;
+
+	if (s1 == 0)
+		return (0);
+	i = 0;
+	start = first_position(s1, set);
+	if (start == ft_strlen(s1))
+		return (ft_strdup("", gc));
+	len = last_position(s1, set) - first_position(s1, set);
+	trim = g_malloc(gc, (len + 1) * sizeof(char));
+	if (trim == 0)
+		return (0);
+	while (i < len)
+	{
+		trim[i] = s1[start];
+		i++;
+		start++;
+	}
+	trim[i] = '\0';
+	return (trim);
 }

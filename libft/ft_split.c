@@ -3,29 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 12:23:16 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/23 12:22:05 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/21 17:04:13 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:22:34 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdlib.h>
-#include<stdio.h>
-#include"libft.h"
 
-int	issep(char c, char s)
+#include "libft.h"
+
+int	nextstep(char c, char charset)
 {
-	if (c == s || c == '\0')
+	if (c == charset)
+	{
 		return (1);
+	}
+	if (c == '\0')
+	{
+		return (1);
+	}
 	return (0);
 }
 
-void	copy_mot(char *dest, char *src, char c)
+int	words_count(char *str, char charset)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (str[i])
+	{
+		if (nextstep(str[i], charset) == 0 && nextstep(str[i + 1],
+				charset) == 1)
+		{
+			count++;
+		}
+		i++;
+	}
+	return (count);
+}
+
+void	words_copy(char *dest, char *src, char charset)
 {
 	int	i;
 
 	i = 0;
-	while (issep(src[i], c) == 0)
+	while (nextstep(src[i], charset) == 0)
 	{
 		dest[i] = src[i];
 		i++;
@@ -33,78 +57,54 @@ void	copy_mot(char *dest, char *src, char c)
 	dest[i] = '\0';
 }
 
-unsigned int	countword(char *s, char c)
+void	split_word(char *str, char charset, char **tab, t_garbage **gc)
 {
-	unsigned int	i;
-	unsigned int	count;
+	int	i;
+	int	j;
+	int	k;
 
 	i = 0;
-	count = 0;
-	while (s[i])
+	k = 0;
+	while (str[i])
 	{
-		if (issep(s[i], c) == 0 && issep(s[i + 1], c) == 1)
-			count++;
-		i++;
-	}
-	return (count);
-}
-
-int	copy(char *s, char **res, char c)
-{
-	unsigned int	i;
-	unsigned int	j;
-	unsigned int	mts;
-
-	i = 0;
-	j = 0;
-	mts = 0;
-	while (s[i])
-	{
-		if (issep(s[i], c) == 1)
+		if (nextstep(str[i], charset) == 1)
 			i++;
 		else
 		{
 			j = 0;
-			while (issep(s[i + j], c) == 0)
+			while (nextstep(str[i + j], charset) == 0)
 				j++;
-			res[mts] = (char *)malloc(sizeof(char) * (j + 1));
-			if (res[mts] == NULL)
-				return (0);
-			copy_mot(res[mts], s + i, c);
+			tab[k] = g_malloc(gc, (j + 1) * sizeof(char));
+			if (tab[k] == 0)
+			{
+				return ;
+			}
+			words_copy(tab[k], str + i, charset);
 			i = i + j;
-			mts++;
+			k++;
 		}
 	}
-	return (1);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c, t_garbage **gc)
 {
-	char	**res;
-	int		mots;
+	char	**tab;
+	char	*c1;
+	int		words;
 
-	if (s == NULL)
-		return (NULL);
-	mots = countword((char *)s, c);
-	res = (char **)malloc(sizeof(char *) * (mots + 1));
-	if (res == NULL)
-		return (NULL);
-	copy((char *)s, res, c);
-	res[mots] = 0;
-	return (res);
-}
-
-/*int	main()
-{
-	char	str[30] = "olol              ";
-	char	sep = ' ';
-	char **res;
-	int i = 0;
-
-	res = ft_split(str,sep);
-	while (res[i])
+	if (s == 0)
 	{
-		printf("%s\n",res[i]);
-		i++;
+		return (0);
 	}
-}*/
+	c1 = (char *)s;
+	words = words_count(c1, c);
+	tab = g_malloc(gc, (words + 1) * sizeof(char *));
+	if (tab == 0)
+	{
+		free(tab);
+		return (0);
+	}
+	split_word(c1, c, tab, gc);
+	tab[words] = 0;
+	return (tab);
+}

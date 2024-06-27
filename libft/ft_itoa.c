@@ -3,52 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 14:02:59 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/23 12:45:09 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/21 17:38:20 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:15:19 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
+
 #include "libft.h"
 
-int	size_mot(int n)
+int	count(int number)
 {
-	int	size;
+	long	num;
 
-	size = 0;
-	if (n <= 0)
-		size++;
-	while (n != 0)
+	num = number;
+	if (num / 10 == 0)
 	{
-		n = n / 10;
-		size++;
+		return (1);
 	}
-	return (size);
+	return (1 + count(num / 10));
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(int n, t_garbage **gc)
 {
-	char	*res;
-	int		size;
-	long	nbr;
+	long	size;
+	long	num1;
+	char	*result;
 
-	nbr = n;
-	size = size_mot(n);
-	res = (char *)malloc(sizeof(char) * (size + 1));
-	if (res == NULL)
-		return (NULL);
-	if (nbr < 0)
-		nbr = nbr * -1;
-	res[size--] = '\0';
+	num1 = n;
+	size = count(num1);
+	if (n < 0)
+		size++;
+	result = g_malloc(gc, (size + 1) * sizeof(char));
+	if (result == 0)
+		return (result);
+	if (num1 < 0)
+		num1 = num1 * -1;
+	result[size--] = '\0';
 	while (0 <= size)
 	{
-		res[size] = ((nbr % 10) + '0');
-		nbr = nbr / 10;
+		result[size] = (num1 % 10) + '0';
+		num1 = num1 / 10;
 		size--;
 	}
 	if (n < 0)
-		res[0] = '-';
-	return (res);
+		result[0] = '-';
+	return (result);
 }

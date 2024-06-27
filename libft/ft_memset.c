@@ -3,39 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 14:22:29 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/20 17:26:40 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/19 14:00:36 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/23 12:02:34 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<unistd.h>
+
 #include "libft.h"
 
-void	*ft_memset(void *str, int c, unsigned int n)
+void	*ft_memset(void *str, int c, size_t count)
 {
-	unsigned int	i;
 	unsigned char	*d;
+	unsigned int	i;
 
-	d = (unsigned char *)str;
+	d = str;
 	i = 0;
-	while (i < n)
+	while (i < count)
 	{
-		d[i] = c;
+		*d = (unsigned char)c;
+		d++;
 		i++;
 	}
-	return (d);
+	return (str);
 }
-
-/*int main()
-{
-    char str[50] = "GeeksForGeeks is for programming geeks.";
-    printf("\nBefore memset(): %s\n", str);
-
-    // Fill 8 characters starting from str[13] with '.'
-    ft_memset(str + 13, '.', 8*sizeof(char));
-
-    printf("After memset():  %s", str);
-    return 0;
-}*/

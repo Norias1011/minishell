@@ -3,34 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 15:03:48 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/21 15:57:19 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/22 10:18:24 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:29:56 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
+
 #include "libft.h"
 
-char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char),
+		t_garbage **gc)
 {
-	char			*res;
 	unsigned int	i;
-	unsigned int	len;
+	char			*c;
+	char			*result;
+	int				size;
 
-	i = 0;
-	if (s == NULL)
-		return (NULL);
-	len = ft_strlen((char *)s);
-	res = (char *)malloc(sizeof(char) * len + 1);
-	if (res == NULL)
-		return (NULL);
-	while (s[i])
+	if (s == 0)
+		return (0);
+	c = (char *)s;
+	size = ft_strlen(c);
+	result = g_malloc(gc, (size + 1) * sizeof(char));
+	if (result == 0)
 	{
-		res[i] = (*f)(i, s[i]);
+		return (result);
+	}
+	i = 0;
+	while (c[i] != '\0')
+	{
+		result[i] = (*f)(i, c[i]);
 		i++;
 	}
-	res[i] = '\0';
-	return (res);
+	result[i] = '\0';
+	return (result);
 }

@@ -3,40 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 13:27:45 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/22 14:18:42 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/20 11:39:10 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/23 12:04:14 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
+
 #include "libft.h"
 
-char	*ft_strrchr(const char *s, int c)
+char	*ft_strrchr(const char *str, int c)
 {
-	int		i;
-	char	*d;
+	int	i;
 
-	d = (char *)s;
 	i = 0;
 	c = (unsigned char)c;
-	while (d[i])
+	while (str[i] != '\0')
+	{
 		i++;
+	}
 	while (i >= 0)
 	{
-		if (d[i] == c)
-			return ((char *)&d[i]);
+		if (str[i] == c)
+		{
+			return ((char *)&str[i]);
+		}
 		i--;
 	}
-	d = NULL;
-	return (d);
+	if (c == '\0')
+		return ((char *)&str[i]);
+	return (NULL);
 }
-
-/*int main ()
-{
-  char str[] = "This is a sample string";
-  char * pch;
-  pch=ft_strrchr(str,'s');
-  printf ("Last occurence of 's' found at : %s\n",pch);
-  return 0;
-}*/

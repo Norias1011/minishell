@@ -3,41 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 10:38:16 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/23 13:41:31 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/21 13:48:15 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:28:12 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
+
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*res;
-	int		j;
+int		ft_strlen(char const *str);
+/*{
+	int	i;
 
-	if (s1 == NULL)
-		return ((char *)s2);
-	if (s2 == NULL)
-		return ((char *)s1);
-	j = ft_strlen(s1) + ft_strlen(s2);
-	res = (char *)malloc(sizeof(char) * (j + 1));
-	if (res == NULL)
-		return (NULL);
-	j = 0;
-	while (s1[j])
+	i = 0;
+	while (str[i] != '\0')
 	{
-		res[j] = s1[j];
+		i++;
+	}
+	return (i);
+}*/
+
+char	*ft_strjoin2(char const *c1, char const *c2, char *result1)
+{
+	int	i;
+	int	j;
+	int	k;
+
+	i = 0;
+	j = 0;
+	k = 0;
+	while (c1[i] != '\0')
+	{
+		result1[k] = c1[i];
+		k++;
+		i++;
+	}
+	while (c2[j] != '\0')
+	{
+		result1[k] = c2[j];
+		k++;
 		j++;
 	}
-	j = 0;
-	while (s2[j])
-	{
-		res[ft_strlen(s1) + j] = s2[j];
-		j++;
-	}
-	res[ft_strlen(s1) + ft_strlen(s2)] = '\0';
-	return (res);
+	result1[k] = '\0';
+	return (result1);
+}
+
+char	*ft_strjoin(char const *s1, char const *s2, t_garbage **gc)
+{
+	char	*result;
+	int		size1;
+	int		size2;
+
+	if (s1 == 0 || s2 == 0)
+		return (0);
+	size1 = ft_strlen(s1);
+	size2 = ft_strlen(s2);
+	result = g_malloc(gc, (size1 + size2 + 1) * sizeof(char));
+	if (result == 0)
+		return (0);
+	ft_strjoin2(s1, s2, result);
+	return (result);
 }

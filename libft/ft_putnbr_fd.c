@@ -3,40 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 15:45:33 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/21 15:51:28 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/22 12:21:15 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/22 15:42:06 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<unistd.h>
-#include"libft.h"
 
-void	ft_putnbr_fd(int nb, int fd)
+#include "libft.h"
+
+void	ft_putnbr_fd(int n, int fd)
 {
-	char	c;
+	long	c;
 
-	c = '\0';
-	if (nb == -2147483648)
+	if (fd == 0)
+		return ;
+	c = n;
+	if (c < 0)
 	{
-		write(fd, "-2147483648", 11);
+		write(fd, "-", 1);
+		c = c * -1;
 	}
-	else
+	if (c >= 10)
 	{
-		if (nb < 0)
-		{
-			nb = -nb;
-			write(fd, "-", 1);
-		}
-		if (nb >= 10)
-		{
-			ft_putnbr_fd(nb / 10, fd);
-			nb = nb % 10;
-		}
-		if (nb < 10)
-		{
-			c = nb + '0';
-			write(fd, &c, 1);
-		}
+		ft_putnbr_fd(c / 10, fd);
+		c = c % 10;
+	}
+	if (c < 10)
+	{
+		c = c + '0';
+		write(fd, &c, 1);
 	}
 }

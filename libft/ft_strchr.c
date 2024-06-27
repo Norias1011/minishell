@@ -3,41 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 16:20:42 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/28 13:28:13 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/20 10:48:20 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/23 12:02:47 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<string.h>
+
 #include "libft.h"
 
 char	*ft_strchr(const char *s, int c)
 {
-	char	*d;
-	int		i;
+	unsigned char	charc;
+	const char		*string;
+	int				i;
 
-	d = (char *)s;
 	i = 0;
-	c = (unsigned char)c;
-	while (d[i])
+	string = s;
+	charc = c;
+	while (string[i] != '\0')
 	{
-		if (d[i] == c)
-			return ((char *)&d[i]);
+		if (string[i] == charc)
+		{
+			return ((char *)&string[i]);
+		}
 		i++;
 	}
-	if (d[i] == c)
-		return ((char *)&d[i]);
-	return (NULL);
+	if (charc == '\0')
+		return ((char *)&string[i]);
+	return (0);
 }
-
-/*int main ()
-{
-  char str[50] = "This is a sample string";
-  char * pch;
-  printf ("Looking for the 's' character in \"%s\"...\n",str);
-  pch=ft_strchr(str,'s');
-  printf ("found at : %s\n",pch);
-  return 0;
-}*/

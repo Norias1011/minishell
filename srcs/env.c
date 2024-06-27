@@ -1,21 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar.c                                       :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/26 16:39:40 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/27 18:04:00 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/06/04 15:48:38 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/10 10:08:14 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<stdarg.h>
-#include"libft.h"
 
-void	ft_putchar(char c)
+#include "../include/minishell.h"
+
+void	env_built(t_minishell *minishell, t_cmds *cmd_lst)
 {
-	write(1, &c, 1);
+	t_env	*tmp;
+
+	(void)cmd_lst;
+	tmp = minishell->env_s;
+	while (tmp)
+	{
+		printf("%s=%s\n", tmp->key, tmp->value);
+		tmp = tmp->next;
+	}
 }

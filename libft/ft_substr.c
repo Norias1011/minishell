@@ -3,65 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/20 18:26:17 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/26 12:25:08 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/21 11:16:11 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:35:18 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
+
 #include "libft.h"
 
-/*char	*ft_substr(char const *s, unsigned int start, unsigned int len)
+char	*ft_substr(char const *s, unsigned int start, size_t len,
+		t_garbage **gc)
 {
-	char			*res;
 	unsigned int	i;
+	unsigned int	s_len;
+	char			*c;
 
-	i = 0;
-	if (s == NULL)
-		return (NULL);
-	if ((int)start > ft_strlen(s))
-		len = 0;
-	if ((int)len > ft_strlen(s + start))
-		len = ft_strlen(s + start);
-	res = (char *)malloc(sizeof(char) * (len + 1));
-	if (res == NULL)
-		return (NULL);
-	while (i < len && ((start + i) < (unsigned int)ft_strlen(s)))
+	s_len = ft_strlen(s);
+	if (start > s_len)
 	{
-		res[i] = s[start + i];
+		len = 0;
+	}
+	else if (len > s_len - start)
+		len = s_len - start;
+	c = g_malloc(gc, (len + 1) * sizeof(char));
+	if (c == 0)
+		return (c);
+	i = 0;
+	while (i < len && s[i])
+	{
+		c[i] = s[start + i];
 		i++;
 	}
-	res[i] = '\0';
-	while (start < (unsigned int)ft_strlen(s) && i < len)
-		res[i++] = s[start++];
-	res[i] = '\0';
-	return (res);
-}*/
-
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	size_t	count;
-	size_t	size;
-	char	*tab;
-
-	if (!s)
-		return (NULL);
-	if ((unsigned int)ft_strlen(s) < start)
-		return (ft_strdup(""));
-	size = ft_strlen(s + start);
-	if (size < len)
-		len = size;
-	tab = (char *)malloc((len + 1) * sizeof(char));
-	if (tab == NULL)
-		return (NULL);
-	count = 0;
-	while (count < len)
-	{
-		tab[count] = s[start + count];
-		count++;
-	}
-	tab[count] = '\0';
-	return (tab);
+	c[i] = '\0';
+	return (c);
 }

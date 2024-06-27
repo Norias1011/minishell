@@ -1,89 +1,82 @@
-SRC = 	ft_atoi.c \
-	ft_bzero.c \
-	ft_calloc.c \
-	ft_isalnum.c \
-	ft_isalpha.c \
-	ft_isascii.c \
-	ft_isdigit.c \
-	ft_isprint.c \
-	ft_itoa.c\
-	ft_memchr.c \
-	ft_memcmp.c \
-	ft_memcpy.c \
-	ft_memmove.c \
-	ft_memset.c \
-	ft_putchar_fd.c \
-	ft_putendl_fd.c \
-	ft_putnbr_fd.c \
-	ft_putstr_fd.c \
-	ft_split.c \
-	ft_strchr.c \
-	ft_strdup.c \
-	ft_striteri.c \
-	ft_strjoin.c \
-	ft_strlcat.c \
-	ft_strlcpy.c \
-	ft_strlen.c \
-	ft_strmapi.c \
-	ft_strncmp.c \
-	ft_strnstr.c \
-	ft_strrchr.c \
-	ft_strtrim.c \
-	ft_substr.c \
-	ft_tolower.c \
-	ft_toupper.c \
-	ft_printf.c \
-	ft_print_int.c \
-	ft_print_string.c \
-	ft_print_unsigned_int.c \
-	ft_put_hex.c \
-	ft_print_char.c \
-	ft_print_prcent.c \
-	ft_put_hexmaj.c \
-	ft_putchar.c \
-	ft_strlen.c \
-	ft_itoa.c \
-	ft_print_pointeur.c \
-	ft_putnbr_base.c \
-	get_next_line.c \
-	get_next_line_utils.c \
-	ft_lstadd_front_bonus.c
-
-SBONUS = ft_lstadd_back_bonus.c \
-	 ft_lstadd_front_bonus.c \
-	 ft_lstclear_bonus.c \
-	 ft_lstdelone_bonus.c \
-	 ft_lstiter_bonus.c \
-	 ft_lstlast_bonus.c \
-	 ft_lstnew_bonus.c \
-	 ft_lstsize_bonus.c \
-	 ft_lstmap_bonus.c
+NAME = libft
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Werror -Wextra -g
 
-OBJ =	${SRC:.c=.o}
+SRC = ft_isalpha.c \
+    ft_isdigit.c \
+    ft_isalnum.c \
+    ft_isascii.c \
+    ft_isprint.c \
+    ft_strlen.c \
+    ft_memset.c \
+    ft_bzero.c \
+    ft_memcpy.c \
+    ft_memmove.c \
+    ft_strlcpy.c \
+    ft_strlcat.c \
+    ft_toupper.c \
+    ft_tolower.c \
+    ft_strchr.c \
+    ft_strrchr.c \
+    ft_strncmp.c \
+    ft_memchr.c \
+    ft_memcmp.c \
+    ft_strnstr.c \
+    ft_atoi.c \
+    ft_calloc.c \
+    ft_strdup.c \
+    ft_substr.c \
+    ft_strtrim.c \
+    ft_strjoin.c \
+    ft_split.c \
+    ft_itoa.c \
+    ft_strmapi.c \
+    ft_striteri.c \
+    ft_putchar_fd.c \
+    ft_putstr_fd.c \
+    ft_putendl_fd.c \
+    ft_putnbr_fd.c \
+    ft_strndup.c \
+    ft_strcmp.c \
+    garbage_coll.c
 
-NAME = libft.a
+BONUS = ft_lstnew_bonus.c \
+	ft_lstadd_front_bonus.c \
+	ft_lstsize_bonus.c \
+	ft_lstlast_bonus.c \
+	ft_lstadd_back_bonus.c \
+	ft_lstdelone_bonus.c \
+	ft_lstclear_bonus.c \
+	ft_lstiter_bonus.c \
+	ft_lstmap_bonus.c
 
-OBONUS = ${SBONUS:.c=.o}
 
-all: ${NAME}
+OBJS = $(SRC:.c=.o)
 
-${NAME}:${OBJ}
-	ar -rcs ${NAME} ${OBJ}
+BONUS_OBJS = $(BONUS:.c=.o)
 
-bonus: ${OBONUS}
+all: $(NAME)
 
-${OBONUS}:
-	${CC} ${CFLAGS} -c $(SBONUS)
-	ar -rcs ${NAME} ${OBONUS}
+$(BONUS_OBJS): %.o: %.c
+		 $(CC) $(CFLAGS) -c $< -o $@
+
+$(NAME): $(OBJS) compile
+
+$(OBJS): %.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+compile:
+	ar -crs $(NAME).a $(OBJS)
+
+bonus:  $(BONUS_OBJS) $(OBJS)
+	ar -crs $(NAME).a $(BONUS_OBJS) $(OBJS)
 
 clean:
-	rm -rf ${OBJ} ${OBONUS}
+	rm -f $(OBJS) $(BONUS_OBJS) 
 
 fclean: clean
-	rm -rf ${NAME}
+	rm -f $(NAME).a
 
 re: fclean all

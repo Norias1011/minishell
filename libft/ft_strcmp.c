@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_print_prcent.c                                  :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/26 16:23:27 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/27 17:59:19 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/05/30 03:56:53 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/20 16:44:14 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<stdarg.h>
-#include"libft.h"
 
-int	ft_print_prcent(void)
+#include "libft.h"
+
+int	ft_strcmp(char *s1, char *s2)
 {
-	write (1, "%", 1);
-	return (1);
+	int	i;
+
+	i = 0;
+	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0')
+		i++;
+	return (s1[i] - s2[i]);
 }

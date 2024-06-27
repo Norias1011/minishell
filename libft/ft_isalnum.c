@@ -3,29 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isalnum.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 12:00:41 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/19 12:25:41 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/19 13:43:05 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/22 15:35:49 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include<stdio.h>
-#include<stdlib.h>
 #include "libft.h"
 
 int	ft_isalnum(int c)
 {
-	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
-		return (1);
-	if (c >= 48 && c <= 57)
-		return (1);
-	return (0);
-}
+	int	result;
 
-/*int	main()
-{
-	char test;
-	test = '9';
-	printf("%d",ft_isalnum(test));
-}*/
+	result = 0;
+	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+	{
+		result = 1;
+	}
+	if (c >= '0' && c <= '9')
+	{
+		result = 1;
+	}
+	return (result);
+}

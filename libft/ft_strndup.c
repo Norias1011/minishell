@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_print_string.c                                  :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/26 16:21:40 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/27 17:59:57 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/05/29 14:13:32 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:31:09 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<stdarg.h>
-#include"libft.h"
 
-int	ft_print_string(char *str)
+#include "libft.h"
+
+char	*ft_strndup(const char *s, size_t n, t_garbage **gc)
 {
-	int	i;
+	char	*dup;
+	size_t	i;
 
 	i = 0;
-	if (str == NULL)
+	dup = g_malloc(gc, (n + 1) * sizeof(char));
+	if (!dup)
+		return (NULL);
+	while (s[i] && i < n)
 	{
-		ft_print_string("(null)");
-		return (6);
-	}
-	while (str[i])
-	{
-		write(1, &str[i], 1);
+		dup[i] = s[i];
 		i++;
 	}
-	return (i);
+	dup[i] = '\0';
+	return (dup);
 }

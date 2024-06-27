@@ -3,51 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 17:48:12 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/26 12:09:03 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/20 14:05:31 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/23 10:55:17 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
+
 #include "libft.h"
 
-char	*ft_strnstr(const char *big, char const *l, unsigned int n)
+char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
-	unsigned int	len;
+	unsigned char	*c;
+	unsigned char	*d;
 	unsigned int	i;
-	unsigned int	c;
+	unsigned int	j;
 
+	c = (unsigned char *)big;
+	d = (unsigned char *)little;
 	i = 0;
-	c = 0;
-	len = ft_strlen(l);
-	if (n == 0 && !big)
-		return (NULL);
-	if ((int)n < 0)
-		n = (unsigned int)ft_strlen(big);
-	if (ft_strlen(l) == 0 || big == l)
-		return ((char *)big);
-	while (i < n && big[i])
+	j = 0;
+	if (d[i] == 0)
+		return ((char *)c);
+	while (i < len && c[i] != '\0')
 	{
-		c = 0;
-		while (big[i + c] != '\0' && l[c] != '\0'
-			&& big[i + c] == l[c] && i + c < n)
-			c++;
-		if (c == len)
-			return ((char *)big + i);
+		while (d[j] == c[i + j])
+		{
+			if (i + j < len)
+			{
+				if (d[j +1] == '\0')
+					return ((char *)&c[i]);
+			}
+			j++;
+		}
 		i++;
 	}
-	return (NULL);
+	return (0);
 }
-
-/*int	main()
-{
-	char str1[20] = "abcdwfmkwamf";
-	char str3[20] = "c";
-	char *result;
-
-	result = str1;
-	result = ft_strnstr(str1, str3, 1);
-	printf("strnstr(str1, str3) = %s\n", result);
-	return 0;
-}*/

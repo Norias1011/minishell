@@ -3,13 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   ft_striteri.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 15:01:05 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/21 15:56:41 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/22 10:41:59 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/02/22 15:44:01 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
+
 #include "libft.h"
 
 void	ft_striteri(char *s, void (*f)(unsigned int, char*))
@@ -17,12 +17,11 @@ void	ft_striteri(char *s, void (*f)(unsigned int, char*))
 	unsigned int	i;
 
 	i = 0;
-	if (s != NULL)
+	if (s == 0)
+		return ;
+	while (s[i] != '\0')
 	{
-		while (s[i])
-		{
-			(*f)(i, &s[i]);
-			i++;
-		}
+		(*f)(i, &s[i]);
+		i++;
 	}
 }

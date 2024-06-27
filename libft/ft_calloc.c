@@ -3,34 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajeandel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/20 12:31:30 by ajeandel          #+#    #+#             */
-/*   Updated: 2024/02/23 13:38:40 by ajeandel         ###   ########.fr       */
+/*   Created: 2024/02/20 18:49:40 by akinzeli          #+#    #+#             */
+/*   Updated: 2024/06/06 14:12:17 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+
 #include "libft.h"
 
-void	*ft_calloc(size_t nitems, size_t size)
+void	*ft_calloc(size_t nitems, size_t size, t_garbage **gc)
 {
-	char			*str;
-	unsigned int	i;
+	void	*p;
+	size_t	total_size;
 
-	if (size == 0 || nitems == 0)
+	total_size = nitems * size;
+	if (nitems == 0 || size == 0)
 		return (malloc(1));
-	if ((int)size < 0 || (int)nitems < 0)
+	if (nitems >= 2147483647 || size >= 2147483647 || nitems
+		* size >= 2147483647)
+		return (0);
+	p = g_malloc(gc, total_size);
+	if (p == NULL)
 		return (NULL);
-	i = 0;
-	str = (char *)malloc(nitems * size);
-	if (str == NULL)
-		return (NULL);
-	while (i < size * nitems)
-	{
-		str[i] = 0;
-		i++;
-	}
-	return (str);
+	ft_bzero(p, (nitems * size));
+	return (p);
 }
