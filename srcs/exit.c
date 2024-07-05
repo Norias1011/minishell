@@ -6,7 +6,7 @@
 /*   By: akinzeli <akinzeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 16:29:37 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/06/20 12:49:35 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/07/05 14:03:07 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,13 @@ int	check_exit(char *str, t_minishell *minishell)
 			i++;
 		if ((str[i] < '0' || str[i] > '9') && (str[i] != '-'))
 		{
-			write(2, " numeric argument required", 26);
+			write(2, " numeric argument required\n", 27);
 			clean_exit(minishell, 2);
 		}
 		i++;
 	}
 	if (word > 1)
-		return (write(2, " too many arguments", 19), INT_MAX);
+		return (write(2, " too many arguments\n", 20), INT_MAX);
 	code_exit = ft_atoi(str);
 	code_exit = check_error_num(code_exit);
 	return (code_exit);
